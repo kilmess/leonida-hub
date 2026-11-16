@@ -4,347 +4,319 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LEONIDA HUB — Base de Datos GTA 6 · Vice City</title>
-  <meta name="description" content="Wiki editorial de GTA 6: distritos de Vice City & Leonida, vehículos confirmados, radios, trucos y guía de preguntas frecuentes para principiantes.">
+  <meta name="description" content="Wiki editorial de GTA 6: distritos de Vice City & Leonida, vehículos confirmados, radios, trucos y guía FAQ para principiantes.">
   <meta name="theme-color" content="#18151f">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='8' fill='%239e4756'/><text y='.88em' font-size='70' x='14' font-family='sans-serif' font-weight='900' fill='white'>VI</text></svg>">
-
-  <!-- Tailwind CSS via CDN (utility classes for spacing/flex utilities only) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      corePlugins: { preflight: false },
-      theme: { extend: {} }
-    }
-  </script>
-
-  <!-- Custom Stylesheet -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='4' fill='%239e4756'/><text y='.88em' font-size='70' x='14' font-family='sans-serif' font-weight='900' fill='white'>VI</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-  <!-- AD SLOT TOP (HIDDEN UNTIL CODE IS INSERTED) -->
   <!-- AD_SLOT_TOP -->
   <div id="ad-slot-top" class="ad-slot-container" style="display:none;"></div>
   <!-- /AD_SLOT_TOP -->
 
   <!-- ================================================
-       TOP NAVIGATION BAR
+       TOP NAVIGATION BAR — Full Width
        ================================================ -->
-  <div id="topbar">
+  <header id="topbar">
     <div class="topbar-inner">
 
       <!-- Logo -->
-      <a class="site-logo" href="#" id="logo-home">
+      <a class="site-logo" href="#" id="logo-home" aria-label="Inicio — LEONIDA HUB">
         <div class="logo-icon">VI</div>
         <div class="logo-text">LEONIDA<span>HUB</span></div>
       </a>
 
-      <!-- Nav Tabs -->
-      <nav class="topnav-tabs" id="topnav-tabs" role="tablist">
-        <button class="nav-tab active" data-tab="todos" data-category="Todos" role="tab" aria-selected="true">Base de Datos</button>
-        <button class="nav-tab" data-tab="trucos" data-category="Trucos (19 Nov)" role="tab" aria-selected="false">Trucos (19 Nov)</button>
-        <button class="nav-tab" data-tab="tips" data-category="Tips & FAQ" role="tab" aria-selected="false">Tips & FAQ</button>
+      <!-- Primary Nav Tabs -->
+      <nav class="topnav-tabs" id="topnav-tabs" role="tablist" aria-label="Categorías principales">
+        <button class="nav-tab active" data-category="Todos"           role="tab" aria-selected="true">TODO</button>
+        <button class="nav-tab"        data-category="Ubicaciones"     role="tab" aria-selected="false">DISTRITOS</button>
+        <button class="nav-tab"        data-category="Vehículos"       role="tab" aria-selected="false">VEHÍCULOS</button>
+        <button class="nav-tab"        data-category="Radios & Música" role="tab" aria-selected="false">RADIOS</button>
+        <button class="nav-tab"        data-category="Trucos (19 Nov)" role="tab" aria-selected="false">TRUCOS — 19 NOV</button>
+        <button class="nav-tab"        data-category="Tips & FAQ"      role="tab" aria-selected="false">TIPS & FAQ</button>
       </nav>
 
-      <!-- Top Search Bar (Desktop) -->
+      <!-- Search (single, desktop) -->
       <div class="topbar-search">
         <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
           <input type="text" id="search-input" placeholder="Buscar..." autocomplete="off" aria-label="Buscar en la base de datos">
-          <button id="clear-search-btn" class="search-clear-btn" title="Borrar" aria-label="Borrar búsqueda">✕</button>
+          <button id="clear-search-btn" class="search-clear-btn" title="Borrar búsqueda" aria-label="Borrar búsqueda">
+            <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
         </div>
       </div>
 
     </div>
-
-    <!-- Mobile Search Bar (< 600px) -->
-    <div class="mobile-search-bar">
-      <input type="text" id="search-input-mobile" placeholder="Buscar distritos, vehículos, radios, tips..." autocomplete="off" aria-label="Búsqueda en mobile">
-    </div>
-  </div>
+  </header>
 
   <!-- ================================================
-       MAIN LAYOUT (3 columns)
+       MAIN PAGE WRAPPER — Full Width, no sidebars
        ================================================ -->
-  <div class="main-wrapper" id="main-wrapper">
+  <div class="page-wrapper">
 
-    <!-- ========== LEFT SIDEBAR ========== -->
-    <aside class="sidebar-left" id="sidebar-left">
-
-      <!-- Explorar -->
-      <div class="module-box">
-        <div class="module-header">
-          <h2>Explorar</h2>
-        </div>
-        <div class="module-body" style="padding: 6px 0;">
-          <div id="sidebar-nav-buttons">
-            <button class="sidebar-nav-item active" data-category="Todos">
-              <span class="nav-icon">🌴</span> Todos
-              <span class="sidebar-count" id="count-todos">—</span>
-            </button>
-            <button class="sidebar-nav-item" data-category="Ubicaciones">
-              <span class="nav-icon">📍</span> Distritos & Mapa
-              <span class="sidebar-count" id="count-ubicaciones">—</span>
-            </button>
-            <button class="sidebar-nav-item" data-category="Vehículos">
-              <span class="nav-icon">🏎️</span> Vehículos
-              <span class="sidebar-count" id="count-vehiculos">—</span>
-            </button>
-            <button class="sidebar-nav-item" data-category="Radios & Música">
-              <span class="nav-icon">📻</span> Radios & Música
-              <span class="sidebar-count" id="count-musica">—</span>
-            </button>
-            <div class="sidebar-divider"></div>
-            <button class="sidebar-nav-item" data-category="Trucos (19 Nov)">
-              <span class="nav-icon">🔒</span> Trucos (19 Nov)
-              <span class="sidebar-count" id="count-trucos">—</span>
-            </button>
-            <button class="sidebar-nav-item" data-category="Tips & FAQ">
-              <span class="nav-icon">💡</span> Tips & FAQ
-              <span class="sidebar-count" id="count-faq">—</span>
-            </button>
-          </div>
-        </div>
+    <!-- === HERO BANNER === -->
+    <section class="hero-banner" id="hero-banner">
+      <div class="hero-bg">
+        <!-- Miami/Vice City SVG atmospheric background -->
+        <svg class="hero-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#1a0533"/>
+              <stop offset="35%"  stop-color="#6b1f4a"/>
+              <stop offset="65%"  stop-color="#c0433d"/>
+              <stop offset="85%"  stop-color="#e8793a"/>
+              <stop offset="100%" stop-color="#f0a850"/>
+            </linearGradient>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="#0d1a3a" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#070f24"/>
+            </linearGradient>
+            <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#f7c948"/>
+              <stop offset="100%" stop-color="#e8793a"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="6" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <!-- Sky -->
+          <rect width="1440" height="340" fill="url(#skyGrad)"/>
+          <!-- Sun / horizon glow -->
+          <ellipse cx="720" cy="210" rx="90" ry="90" fill="url(#sunGrad)" opacity="0.55" filter="url(#glow)"/>
+          <ellipse cx="720" cy="225" rx="140" ry="30" fill="#f7b341" opacity="0.18"/>
+          <!-- Horizon line shimmer -->
+          <rect x="0" y="210" width="1440" height="2" fill="#f0a850" opacity="0.5"/>
+          <!-- Water -->
+          <rect x="0" y="210" width="1440" height="130" fill="url(#waterGrad)"/>
+          <!-- Water sun reflection -->
+          <ellipse cx="720" cy="225" rx="60" ry="8" fill="#f7b341" opacity="0.25"/>
+          <rect x="680" y="220" width="80" height="90" fill="url(#sunGrad)" opacity="0.08"/>
+          <!-- Skyline silhouette — buildings -->
+          <g fill="#100824" opacity="0.9">
+            <rect x="40"  y="140" width="30" height="70"/>
+            <rect x="80"  y="120" width="22" height="90"/>
+            <rect x="110" y="150" width="18" height="60"/>
+            <rect x="135" y="130" width="26" height="80"/>
+            <rect x="168" y="145" width="20" height="65"/>
+            <rect x="195" y="110" width="32" height="100"/>
+            <rect x="234" y="135" width="18" height="75"/>
+            <rect x="258" y="155" width="24" height="55"/>
+            <rect x="288" y="125" width="28" height="85"/>
+            <!-- Right side -->
+            <rect x="1150" y="150" width="28" height="60"/>
+            <rect x="1185" y="130" width="22" height="80"/>
+            <rect x="1215" y="115" width="34" height="95"/>
+            <rect x="1256" y="140" width="20" height="70"/>
+            <rect x="1283" y="125" width="26" height="85"/>
+            <rect x="1316" y="155" width="18" height="55"/>
+            <rect x="1340" y="135" width="30" height="75"/>
+            <rect x="1377" y="148" width="22" height="62"/>
+          </g>
+          <!-- Palm trees left -->
+          <g fill="#0a0618" opacity="0.85">
+            <rect x="340" y="130" width="5" height="82"/>
+            <ellipse cx="342" cy="130" rx="28" ry="10" transform="rotate(-15 342 130)"/>
+            <ellipse cx="342" cy="130" rx="26" ry="9"  transform="rotate(10 342 130)"/>
+            <ellipse cx="342" cy="130" rx="22" ry="8"  transform="rotate(35 342 130)"/>
+            <ellipse cx="342" cy="130" rx="22" ry="8"  transform="rotate(-40 342 130)"/>
+          </g>
+          <!-- Palm trees right -->
+          <g fill="#0a0618" opacity="0.85">
+            <rect x="1098" y="135" width="5" height="77"/>
+            <ellipse cx="1100" cy="135" rx="28" ry="10" transform="rotate(15 1100 135)"/>
+            <ellipse cx="1100" cy="135" rx="26" ry="9"  transform="rotate(-10 1100 135)"/>
+            <ellipse cx="1100" cy="135" rx="22" ry="8"  transform="rotate(-35 1100 135)"/>
+            <ellipse cx="1100" cy="135" rx="22" ry="8"  transform="rotate(40 1100 135)"/>
+          </g>
+          <!-- Center palms -->
+          <g fill="#0a0618" opacity="0.6">
+            <rect x="618" y="150" width="4" height="62"/>
+            <ellipse cx="620" cy="150" rx="22" ry="8" transform="rotate(-20 620 150)"/>
+            <ellipse cx="620" cy="150" rx="20" ry="7" transform="rotate(15 620 150)"/>
+            <rect x="818" y="155" width="4" height="57"/>
+            <ellipse cx="820" cy="155" rx="22" ry="8" transform="rotate(20 820 155)"/>
+            <ellipse cx="820" cy="155" rx="20" ry="7" transform="rotate(-15 820 155)"/>
+          </g>
+          <!-- Neon city lights (window dots) -->
+          <g fill="#f59e9b" opacity="0.6">
+            <rect x="90" y="128" width="2" height="2"/><rect x="96" y="134" width="2" height="2"/>
+            <rect x="202" y="118" width="2" height="2"/><rect x="208" y="126" width="2" height="2"/>
+            <rect x="1198" y="138" width="2" height="2"/><rect x="1225" y="122" width="2" height="2"/>
+            <rect x="1290" y="132" width="2" height="2"/>
+          </g>
+          <g fill="#e69d45" opacity="0.5">
+            <rect x="145" y="138" width="2" height="2"/><rect x="300" y="130" width="2" height="2"/>
+            <rect x="1165" y="142" width="2" height="2"/><rect x="1352" y="142" width="2" height="2"/>
+          </g>
+          <!-- Fade to page bg at bottom -->
+          <rect x="0" y="260" width="1440" height="80">
+            <animate attributeName="opacity" values="0;0;0" dur="1s"/>
+          </rect>
+          <defs>
+            <linearGradient id="fadeBot" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#18151f" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#18151f" stop-opacity="1"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="200" width="1440" height="140" fill="url(#fadeBot)"/>
+        </svg>
       </div>
 
-      <!-- GTA VI Info -->
-      <div class="module-box">
-        <div class="module-header">
-          <h2>GTA VI</h2>
+      <!-- Hero content overlay -->
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-eyebrow">ROCKSTAR GAMES — LANZAMIENTO MUNDIAL</div>
+          <h1 class="hero-title">GTA VI<br><span>Vice City & Leonida</span></h1>
+          <p class="hero-desc">Base de datos comunitaria: distritos, vehículos, radios, trucos y guías para el mayor open-world de la historia.</p>
         </div>
-        <div class="module-body" style="padding: 6px 0;">
-          <button class="sidebar-nav-item" style="cursor:default;">
-            <span class="nav-icon">🗺️</span> <span style="font-size:11px;">Leonida / Florida</span>
-          </button>
-          <button class="sidebar-nav-item" style="cursor:default;">
-            <span class="nav-icon">📅</span> <span style="font-size:11px;">19 Nov 2026</span>
-          </button>
-          <button class="sidebar-nav-item" style="cursor:default;">
-            <span class="nav-icon">🎮</span> <span style="font-size:11px;">PS5 · Xbox · PC</span>
-          </button>
-          <button class="sidebar-nav-item" style="cursor:default;">
-            <span class="nav-icon">🌊</span> <span style="font-size:11px;">Vice City · Keys</span>
-          </button>
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- ========== CENTER MAIN CONTENT ========== -->
-    <main id="main-content">
-
-      <!-- BENTO: Destacados & Lanzamiento -->
-      <div id="featured-section">
-        <div class="module-box" style="margin-bottom: 10px;">
-          <div class="module-header">
-            <h2>Últimas Novedades &amp; Destacados</h2>
-            <span style="font-size:10px; font-weight:600; color:#111; opacity:.6;">ROCKSTAR GAMES · 2026</span>
-          </div>
-        </div>
-
-        <div class="bento-grid">
-
-          <!-- Main feature card -->
-          <div class="bento-main">
-            <span class="bento-label">🌴 Lanzamiento Oficial</span>
-            <div class="bento-title">GTA 6 &mdash;<br>Vice City &amp; Leonida</div>
-            <div class="bento-desc">El mayor open-world de Rockstar Games. Juega como Jason &amp; Lucia en el Estado de Leonida, con Vice City como epicentro del crimen, lujo y caos tropical.</div>
-          </div>
-
-          <!-- Right column: countdown + mini info -->
-          <div class="bento-right">
-
-            <div class="countdown-box">
-              <div class="countdown-header">🕐 Lanzamiento Mundial en:</div>
-              <div class="countdown-body">
-                <div class="cd-seg">
-                  <span class="cd-num" id="cd-days">000</span>
-                  <span class="cd-label">Días</span>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-seg">
-                  <span class="cd-num" id="cd-hours">00</span>
-                  <span class="cd-label">Horas</span>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-seg">
-                  <span class="cd-num" id="cd-mins">00</span>
-                  <span class="cd-label">Min</span>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-seg">
-                  <span class="cd-num" id="cd-secs">00</span>
-                  <span class="cd-label">Seg</span>
-                </div>
-              </div>
-              <div class="countdown-date">19 Noviembre 2026 · 00:00 UTC</div>
+        <div class="hero-right">
+          <!-- Countdown -->
+          <div class="countdown-box">
+            <div class="countdown-header">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
+              </svg>
+              LANZAMIENTO MUNDIAL EN:
             </div>
-
-            <div class="mini-info-box">
-              <div class="mini-icon">🗺️</div>
-              <div>
-                <span class="mini-label">Mapa Confirmado</span>
-                <span class="mini-val">Vice City + Leonida Keys</span>
+            <div class="countdown-body">
+              <div class="cd-seg">
+                <span class="cd-num" id="cd-days">000</span>
+                <span class="cd-label">DÍAS</span>
+              </div>
+              <span class="cd-sep">:</span>
+              <div class="cd-seg">
+                <span class="cd-num" id="cd-hours">00</span>
+                <span class="cd-label">HORAS</span>
+              </div>
+              <span class="cd-sep">:</span>
+              <div class="cd-seg">
+                <span class="cd-num" id="cd-mins">00</span>
+                <span class="cd-label">MIN</span>
+              </div>
+              <span class="cd-sep">:</span>
+              <div class="cd-seg">
+                <span class="cd-num" id="cd-secs">00</span>
+                <span class="cd-label">SEG</span>
               </div>
             </div>
-
-            <div class="mini-info-box">
-              <div class="mini-icon">🎭</div>
-              <div>
-                <span class="mini-label">Protagonistas</span>
-                <span class="mini-val">Jason &amp; Lucia</span>
-              </div>
-            </div>
-
+            <div class="countdown-date">19 NOVIEMBRE 2026 · 00:00 UTC</div>
+          </div>
+          <!-- Meta chips -->
+          <div class="hero-chips">
+            <span class="hero-chip">
+              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Vice City · Leonida Keys
+            </span>
+            <span class="hero-chip">
+              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              Jason & Lucia
+            </span>
+            <span class="hero-chip">PS5 · Xbox · PC</span>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- CATALOG HEADER -->
-      <div class="module-box" style="margin-top: 10px; margin-bottom: 6px;">
-        <div class="module-header" id="catalog-header">
-          <h2 id="catalog-title">Base de Datos de Trucos, Secretos &amp; Vehículos</h2>
+    <!-- === CONTENT AREA === -->
+    <div class="content-area">
+
+      <!-- AD_SLOT_TOP position (hidden) -->
+      <!-- Section header bar -->
+      <div class="section-header-bar">
+        <div class="section-header-inner">
+          <h2 class="section-title" id="catalog-title">BASE DE DATOS — TODOS LOS REGISTROS</h2>
+          <div class="results-meta" id="results-count">Cargando...</div>
         </div>
-      </div>
-
-      <!-- Results bar -->
-      <div class="results-bar" id="results-bar">
-        <div id="results-count" style="font-size:11px; color: #9b93ab;">Cargando...</div>
         <div class="results-controls">
-          <label>
+          <label class="toggle-label">
             <input type="checkbox" id="hide-saved-toggle"> Ocultar guardados
           </label>
-          <button id="reset-marks-btn">Limpiar marcas</button>
+          <button id="reset-marks-btn" class="ctrl-btn">Limpiar marcas</button>
         </div>
       </div>
 
       <!-- ITEMS GRID (dynamic) -->
-      <div id="items-grid" class="catalog-grid">
-        <!-- Cards injected by app.js -->
-      </div>
+      <div id="items-grid" class="catalog-grid"></div>
+
+      <!-- FAQ GRID (Tips & FAQ — 2 columns) -->
+      <div id="faq-grid" class="faq-grid" style="display:none;"></div>
 
       <!-- EMPTY STATE -->
-      <div id="empty-state">
-        <div class="es-icon">🔍</div>
+      <div id="empty-state" style="display:none;">
+        <div class="empty-icon">
+          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
+        </div>
         <h3>Sin coincidencias en Leonida</h3>
-        <p>No se encontraron registros con ese término. Intenta con otra palabra o restablece los filtros.</p>
-        <button id="reset-all-filters-btn">Ver todos los registros</button>
+        <p>No se encontraron registros. Intenta con otra palabra o restablece los filtros.</p>
+        <button id="reset-all-filters-btn" class="reset-btn">Ver todos los registros</button>
       </div>
 
-    </main>
+    </div><!-- /content-area -->
 
-    <!-- ========== RIGHT SIDEBAR WIDGETS ========== -->
-    <aside class="sidebar-right">
-
-      <!-- Estado -->
-      <div class="module-box">
-        <div class="module-header">
-          <h2>Estado del Juego</h2>
-        </div>
-        <div class="module-body widget-status">
-          <div class="status-row">
-            <span class="status-label">Estado</span>
-            <span class="status-val"><span class="status-dot"></span>Pre-lanzamiento</span>
-          </div>
-          <div class="status-row">
-            <span class="status-label">Plataformas</span>
-            <span class="status-val">PS5 · Xbox</span>
-          </div>
-          <div class="status-row">
-            <span class="status-label">Studio</span>
-            <span class="status-val">Rockstar Games</span>
-          </div>
-          <div class="status-row">
-            <span class="status-label">Registros DB</span>
-            <span class="status-val" id="total-items-count">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Redes Sociales -->
-      <div class="module-box">
-        <div class="module-header">
-          <h2>Seguir la Comunidad</h2>
-        </div>
-        <div class="module-body widget-links">
-          <a href="https://tiktok.com" target="_blank" rel="noopener">
-            <span class="wl-icon">🎵</span>
-            <span class="wl-label">TikTok</span>
-            <span class="wl-arrow">↗</span>
-          </a>
-          <a href="https://youtube.com" target="_blank" rel="noopener">
-            <span class="wl-icon">📺</span>
-            <span class="wl-label">YouTube Shorts</span>
-            <span class="wl-arrow">↗</span>
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener">
-            <span class="wl-icon">📸</span>
-            <span class="wl-label">Instagram</span>
-            <span class="wl-arrow">↗</span>
-          </a>
-          <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener">
-            <span class="wl-icon">⭐</span>
-            <span class="wl-label">GitHub</span>
-            <span class="wl-arrow">↗</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Tip del Día -->
-      <div class="module-box">
-        <div class="module-header">
-          <h2>Tip Destacado del Día</h2>
-        </div>
-        <div class="module-body tip-of-day">
-          <strong>💡 Pro Tip — Vice City</strong>
-          Los vehículos robados en Ocean Drive durante el horario nocturno (10 PM–4 AM) tienen un 40% más de valor en el mercado negro de los talleres de Venetian Islands.
-        </div>
-      </div>
-
-    </aside>
-
-  </div><!-- /main-wrapper -->
+  </div><!-- /page-wrapper -->
 
   <!-- ================================================
        FOOTER
        ================================================ -->
-  <footer>
-    <strong>Leonida VI Hub</strong> &copy; 2026 &mdash; Base de datos comunitaria no oficial.
-    Grand Theft Auto &amp; Rockstar Games son marcas registradas de Take-Two Interactive Software, Inc.
-    <br>
-    <button class="footer-support-btn" id="support-btn">☕ Apoyar el proyecto</button>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>
+        <strong>Leonida VI Hub</strong> &copy; 2026 &mdash; Base de datos comunitaria no oficial.
+        Grand Theft Auto & Rockstar Games son marcas registradas de Take-Two Interactive.
+      </span>
+      <div class="footer-links">
+        <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener">GitHub</a>
+        <button class="footer-support-btn" id="support-btn">Apoyar el proyecto</button>
+      </div>
+    </div>
   </footer>
 
-  <!-- AD SLOT BOTTOM (HIDDEN) -->
   <!-- AD_SLOT_BOTTOM -->
   <div id="ad-slot-bottom" class="ad-slot-container" style="display:none;"></div>
   <!-- /AD_SLOT_BOTTOM -->
 
   <!-- TOAST -->
-  <div id="toast">
-    <span class="toast-dot"></span>
+  <div id="toast" role="status" aria-live="polite">
+    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+    </svg>
     <span id="toast-message">Copiado al portapapeles</span>
   </div>
 
   <!-- SUPPORT MODAL -->
-  <div id="support-modal">
+  <div id="support-modal" role="dialog" aria-modal="true" aria-label="Apoyar Leonida Hub">
     <div class="modal-box">
       <div class="modal-header-bar">
-        <h3>🌴 Apoyar Leonida Hub</h3>
-        <button class="modal-close-btn" id="close-modal-btn" aria-label="Cerrar">✕</button>
+        <h3>APOYAR LEONIDA HUB</h3>
+        <button class="modal-close-btn" id="close-modal-btn" aria-label="Cerrar">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
       <div class="modal-body">
-        <p>Este portal comunitario es 100% gratuito. Tu aporte mantiene los servidores y actualiza la base de datos en tiempo real antes y después del lanzamiento.</p>
+        <p>Este portal comunitario es 100% gratuito. Tu aporte mantiene los servidores y actualiza la base de datos antes y después del lanzamiento.</p>
         <div class="modal-actions">
-          <a href="https://ko-fi.com" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">☕ Invitar un café en Ko-fi</a>
-          <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener" class="modal-btn modal-btn-secondary">⭐ GitHub — Ver código fuente</a>
+          <a href="https://ko-fi.com" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">Invitar un café en Ko-fi</a>
+          <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener" class="modal-btn modal-btn-secondary">GitHub — Ver código fuente</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- App Logic -->
   <script src="app.js"></script>
-
 </body>
 </html>

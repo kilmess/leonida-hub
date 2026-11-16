@@ -1,6 +1,6 @@
 /**
- * LEONIDA VI HUB — GTA.wiki Editorial Style
- * Vanilla JavaScript — Full Data & UI Logic
+ * LEONIDA VI HUB — Full-Width Layout
+ * Vanilla JS — Zero emojis, single search input, FAQ 2-col grid
  */
 
 (function () {
@@ -12,41 +12,40 @@
   const STORAGE_KEY = 'leonida_vi_saved';
   const LAUNCH_DATE = new Date('2026-11-19T00:00:00');
 
-  // Category meta
   const CATEGORY_META = {
-    'Ubicaciones': { id: 'ubicaciones', badgeClass: 'badge-ubicaciones', label: 'DISTRITO' },
-    'Vehículos':   { id: 'vehiculos',   badgeClass: 'badge-vehiculos',   label: 'VEHÍCULO' },
-    'Radios & Música': { id: 'musica',  badgeClass: 'badge-musica',      label: 'RADIO / MÚSICA' },
-    'Trucos (19 Nov)': { id: 'trucos',  badgeClass: 'badge-trucos',      label: 'TRUCOS' },
-    'Tips & FAQ': { id: 'faq',          badgeClass: 'badge-faq',         label: 'TIPS & FAQ' },
+    'Ubicaciones':     { badgeClass: 'badge-ubicaciones', stripClass: 'strip-ubicaciones', label: 'DISTRITO' },
+    'Vehículos':       { badgeClass: 'badge-vehiculos',   stripClass: 'strip-vehiculos',   label: 'VEHÍCULO' },
+    'Radios & Música': { badgeClass: 'badge-musica',      stripClass: 'strip-musica',      label: 'RADIO' },
+    'Trucos (19 Nov)': { badgeClass: 'badge-trucos',      stripClass: 'strip-trucos',      label: 'TRUCOS' },
+    'Tips & FAQ':      { badgeClass: 'badge-faq',         stripClass: 'strip-faq',         label: 'FAQ' },
   };
 
-  const CATALOG_HEADER_LABELS = {
-    'Todos': 'Base de Datos de Trucos, Secretos &amp; Vehículos',
-    'Ubicaciones': 'Distritos &amp; Zonas de Leonida — Confirmados',
-    'Vehículos': 'Vehículos Confirmados en GTA VI',
-    'Radios & Música': 'Emisoras &amp; Banda Sonora Oficial',
-    'Trucos (19 Nov)': 'Base de Datos de Trucos — Se Desbloquean el 19 Nov 2026',
-    'Tips & FAQ': 'Guía para Principiantes &amp; Preguntas Frecuentes',
+  const HEADER_LABELS = {
+    'Todos':           'BASE DE DATOS — TODOS LOS REGISTROS',
+    'Ubicaciones':     'DISTRITOS & ZONAS DE LEONIDA',
+    'Vehículos':       'VEHÍCULOS CONFIRMADOS EN GTA VI',
+    'Radios & Música': 'EMISORAS & BANDA SONORA OFICIAL',
+    'Trucos (19 Nov)': 'TRUCOS — SE DESBLOQUEAN EL 19 NOV 2026',
+    'Tips & FAQ':      'GUÍA PARA PRINCIPIANTES & PREGUNTAS FRECUENTES',
   };
 
   // =====================================================
   // STATE
   // =====================================================
-  let itemsData = [];
-  let currentCategory = 'Todos';
-  let searchQuery = '';
-  let hideSaved = false;
-  let savedItems = new Set();
+  let itemsData      = [];
+  let currentCat     = 'Todos';
+  let searchQuery    = '';
+  let hideSaved      = false;
+  let savedItems     = new Set();
 
   // =====================================================
   // DOM REFERENCES
   // =====================================================
   const itemsGrid        = document.getElementById('items-grid');
+  const faqGrid          = document.getElementById('faq-grid');
   const resultsCount     = document.getElementById('results-count');
   const emptyState       = document.getElementById('empty-state');
   const catalogTitle     = document.getElementById('catalog-title');
-  const totalItemsCount  = document.getElementById('total-items-count');
   const hideSavedToggle  = document.getElementById('hide-saved-toggle');
   const resetMarksBtn    = document.getElementById('reset-marks-btn');
   const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
@@ -56,30 +55,18 @@
   const supportModal     = document.getElementById('support-modal');
   const closeModalBtn    = document.getElementById('close-modal-btn');
 
-  // Search inputs (desktop & mobile)
+  // Single desktop search + mobile search
   const searchInputDesktop = document.getElementById('search-input');
   const searchInputMobile  = document.getElementById('search-input-mobile');
   const clearSearchBtn     = document.getElementById('clear-search-btn');
 
-  // Nav elements
-  const topnavTabs       = document.getElementById('topnav-tabs');
-  const sidebarNavBtns   = document.getElementById('sidebar-nav-buttons');
+  const topnavTabs = document.getElementById('topnav-tabs');
 
   // Countdown
   const cdDays  = document.getElementById('cd-days');
   const cdHours = document.getElementById('cd-hours');
   const cdMins  = document.getElementById('cd-mins');
   const cdSecs  = document.getElementById('cd-secs');
-
-  // Sidebar counts
-  const sidebarCounts = {
-    'Todos':          document.getElementById('count-todos'),
-    'Ubicaciones':    document.getElementById('count-ubicaciones'),
-    'Vehículos':      document.getElementById('count-vehiculos'),
-    'Radios & Música': document.getElementById('count-musica'),
-    'Trucos (19 Nov)': document.getElementById('count-trucos'),
-    'Tips & FAQ':     document.getElementById('count-faq'),
-  };
 
   // =====================================================
   // LOCAL STORAGE
@@ -95,21 +82,18 @@
   }
 
   function persistSaved() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedItems]));
-    } catch (e) {}
-    updateTotalCount();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedItems])); } catch (e) {}
   }
 
   // =====================================================
-  // COUNTDOWN TIMER
+  // COUNTDOWN
   // =====================================================
   function tickCountdown() {
     if (!cdDays) return;
     const diff = LAUNCH_DATE - new Date();
     if (diff <= 0) {
       cdDays.textContent = '000'; cdHours.textContent = '00';
-      cdMins.textContent = '00';  cdSecs.textContent = '00';
+      cdMins.textContent = '00';  cdSecs.textContent  = '00';
       return;
     }
     const s = Math.floor(diff / 1000);
@@ -135,35 +119,29 @@
   // =====================================================
   async function loadData() {
     try {
-      resultsCount.textContent = 'Cargando base de datos...';
+      resultsCount.textContent = 'Cargando...';
       const resp = await fetch('data.json');
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       itemsData = await resp.json();
-      updateSidebarCounts();
-      updateTotalCount();
       renderItems();
     } catch (err) {
       console.error('data.json error:', err);
       resultsCount.textContent = 'Error cargando la base de datos.';
       itemsGrid.innerHTML = `
-        <div style="padding:20px; text-align:center; color:#f08080; border:1px solid #5c3636; border-radius:4px; background:#2a1a1a;">
+        <div style="padding:24px;text-align:center;color:#f08080;border:1px solid #5c3636;border-radius:4px;background:#2a1a1a;grid-column:1/-1;">
           <strong>No se pudo cargar data.json</strong><br>
-          <span style="font-size:11px; color:#888;">Verifica que el servidor local esté activo (puerto 8080).</span>
+          <span style="font-size:11px;color:#888;">Verifica que el servidor local este activo.</span>
         </div>`;
     }
   }
 
   // =====================================================
-  // SIDEBAR + HEADER COUNTS
+  // HTML ESCAPE
   // =====================================================
-  function updateSidebarCounts() {
-    const counts = { 'Todos': itemsData.length, 'Ubicaciones': 0, 'Vehículos': 0, 'Radios & Música': 0, 'Trucos (19 Nov)': 0, 'Tips & FAQ': 0 };
-    itemsData.forEach(item => { if (counts[item.category] !== undefined) counts[item.category]++; });
-    Object.entries(sidebarCounts).forEach(([cat, el]) => { if (el) el.textContent = counts[cat] ?? '0'; });
-  }
-
-  function updateTotalCount() {
-    if (totalItemsCount) totalItemsCount.textContent = itemsData.length;
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+              .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
   }
 
   // =====================================================
@@ -172,7 +150,7 @@
   function getFiltered() {
     const q = searchQuery.toLowerCase().trim();
     return itemsData.filter(item => {
-      if (currentCategory !== 'Todos' && item.category !== currentCategory) return false;
+      if (currentCat !== 'Todos' && item.category !== currentCat) return false;
       if (hideSaved && savedItems.has(item.id)) return false;
       if (q) {
         const hay = [item.title, item.effect, item.description, item.category, item.location, ...(item.tags || [])]
@@ -184,120 +162,125 @@
   }
 
   // =====================================================
-  // HTML HELPERS
+  // BADGE HELPERS
   // =====================================================
-  function escHtml(str) {
-    if (!str) return '';
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-  }
-
   function getCatBadge(item) {
     const meta = CATEGORY_META[item.category];
-    if (!meta) return `<span class="item-cat-badge" style="background:rgba(90,80,110,0.4);color:#9b93ab;border:1px solid #3c344c;">${escHtml(item.category)}</span>`;
-    return `<span class="item-cat-badge ${meta.badgeClass}">${escHtml(item.badge || meta.label)}</span>`;
+    const cls  = meta ? meta.badgeClass : 'badge-locked';
+    const lbl  = item.badge || (meta ? meta.label : item.category);
+    return `<span class="item-cat-badge ${cls}">${esc(lbl)}</span>`;
   }
 
-  // Format multi-line FAQ description (numbered steps)
-  function formatFaqDescription(desc) {
+  function getCatStrip(item) {
+    const meta = CATEGORY_META[item.category];
+    return `<div class="card-cat-strip ${meta ? meta.stripClass : 'strip-default'}"></div>`;
+  }
+
+  // Format multi-line FAQ steps
+  function formatFaqSteps(desc) {
     if (!desc) return '';
-    return desc.split('\n').filter(l => l.trim()).map(line => `<p>${escHtml(line.trim())}</p>`).join('');
+    return desc.split('\n').filter(l => l.trim())
+      .map(line => `<p>${esc(line.trim())}</p>`).join('');
+  }
+
+  // Save button HTML
+  function saveBtnHtml(id) {
+    const isSaved = savedItems.has(id);
+    return `
+      <button class="card-action-btn btn-save save-btn ${isSaved ? 'saved' : ''}" data-id="${id}">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+        </svg>
+        <span class="save-label">${isSaved ? 'GUARDADO' : 'GUARDAR'}</span>
+      </button>`;
+  }
+
+  // Share button HTML
+  function shareBtnHtml(id, title, summary) {
+    return `
+      <button class="card-action-btn btn-share share-btn" data-id="${id}"
+        data-title="${esc(title)}" data-summary="${esc(summary)}">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342
+               m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316
+               m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684z
+               m0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+        COMPARTIR
+      </button>`;
   }
 
   // =====================================================
-  // RENDER: Normal catalog item
+  // RENDER: Normal card (clean — no italic box)
   // =====================================================
   function renderNormalCard(item) {
-    const isSaved = savedItems.has(item.id);
-    const isLocked = item.category === 'Trucos (19 Nov)';
-    const confirmedDot = item.confirmed_in ? `<span class="item-confirmed"><span class="item-confirmed-dot"></span>${escHtml(item.confirmed_in)}</span>` : '';
+    const isLocked  = item.category === 'Trucos (19 Nov)';
+    const confirmed = item.confirmed_in
+      ? `<span class="item-confirmed"><span class="confirmed-dot"></span>${esc(item.confirmed_in)}</span>`
+      : '';
+    const locationHtml = item.location ? `
+      <div class="item-location">
+        <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        ${esc(item.location)}
+      </div>` : '';
+
+    const lockedBanner = isLocked ? `
+      <div class="item-locked-banner">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        <span>Disponible el <strong>19 de Noviembre de 2026</strong></span>
+      </div>` : '';
 
     return `
       <div class="item-card" id="card-${item.id}" data-id="${item.id}">
-        <div class="item-card-header">
+        ${getCatStrip(item)}
+        <div class="card-top">
           ${getCatBadge(item)}
-          ${confirmedDot}
+          ${confirmed}
         </div>
-        <div class="item-card-body">
-          <div class="item-title">${escHtml(item.title)}</div>
-          <div class="item-effect">${escHtml(item.effect)}</div>
-          ${isLocked ? `
-            <div class="item-locked-banner">
-              🔒 <span>Trucos bloqueados — disponibles el <strong>19 de Noviembre de 2026</strong>.</span>
-            </div>
-          ` : ''}
-          ${item.description && !isLocked ? `<div class="item-desc">${escHtml(item.description)}</div>` : ''}
-          ${item.location ? `
-            <div class="item-location">
-              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              ${escHtml(item.location)}
-            </div>
-          ` : ''}
+        <div class="card-body">
+          <div class="item-title">${esc(item.title)}</div>
+          <div class="item-effect">${esc(item.effect)}</div>
+          ${lockedBanner}
+          ${locationHtml}
         </div>
-        <div class="item-card-footer">
-          <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;">
-            <input type="checkbox" class="save-checkbox" data-id="${item.id}" ${isSaved ? 'checked' : ''} style="accent-color:#68b68d;width:12px;height:12px;">
-            <span class="save-label" style="color:${isSaved ? '#68b68d' : '#6a6075'};font-weight:${isSaved ? '600' : '400'};">
-              ${isSaved ? '✓ Guardado' : 'Guardar'}
-            </span>
-          </label>
-          <button
-            class="card-action-btn btn-share share-btn"
-            data-id="${item.id}"
-            data-title="${escHtml(item.title)}"
-            data-summary="${escHtml(item.effect)}"
-          >
-            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-            </svg>
-            Compartir
-          </button>
+        <div class="card-footer">
+          ${saveBtnHtml(item.id)}
+          ${shareBtnHtml(item.id, item.title, item.effect)}
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   // =====================================================
   // RENDER: FAQ Accordion card
   // =====================================================
   function renderFaqCard(item) {
-    const isSaved = savedItems.has(item.id);
     return `
       <div class="faq-card" id="card-${item.id}" data-id="${item.id}">
         <button class="faq-toggle" data-faq-id="${item.id}" aria-expanded="false">
           <span class="faq-toggle-icon">+</span>
           <span class="faq-toggle-content">
-            <span class="faq-badge">${escHtml(item.badge || 'FAQ')}</span>
-            <span class="faq-question">${escHtml(item.title)}</span>
+            <span class="faq-badge">${esc(item.badge || 'FAQ')}</span>
+            <span class="faq-question">${esc(item.title)}</span>
           </span>
-          <span class="faq-toggle-arrow">▼</span>
+          <span class="faq-toggle-arrow">&#9660;</span>
         </button>
         <div class="faq-answer" id="faq-answer-${item.id}">
-          <div class="faq-answer-steps">${formatFaqDescription(item.description)}</div>
+          <div class="faq-answer-steps">${formatFaqSteps(item.description)}</div>
           <div class="faq-answer-footer">
-            <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;">
-              <input type="checkbox" class="save-checkbox" data-id="${item.id}" ${isSaved ? 'checked' : ''} style="accent-color:#68b68d;width:12px;height:12px;">
-              <span class="save-label" style="color:${isSaved ? '#68b68d' : '#6a6075'};font-weight:${isSaved ? '600' : '400'};">
-                ${isSaved ? '✓ Guardado' : 'Guardar'}
-              </span>
-            </label>
-            <button
-              class="card-action-btn btn-share share-btn"
-              data-id="${item.id}"
-              data-title="${escHtml(item.title)}"
-              data-summary="${escHtml(item.effect)}"
-            >
-              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-              </svg>
-              Compartir
-            </button>
+            ${saveBtnHtml(item.id)}
+            ${shareBtnHtml(item.id, item.title, item.effect)}
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   // =====================================================
@@ -305,62 +288,86 @@
   // =====================================================
   function renderItems() {
     const filtered = getFiltered();
-    const total = itemsData.length;
-    const isFaqView = currentCategory === 'Tips & FAQ';
+    const total    = itemsData.length;
+    const isFaqView = currentCat === 'Tips & FAQ';
 
-    // Update catalog header
+    // Update section header title
     if (catalogTitle) {
-      catalogTitle.innerHTML = CATALOG_HEADER_LABELS[currentCategory] || CATALOG_HEADER_LABELS['Todos'];
+      catalogTitle.textContent = HEADER_LABELS[currentCat] || HEADER_LABELS['Todos'];
     }
 
-    // Update results bar
-    if (searchQuery.trim()) {
-      resultsCount.innerHTML = `Mostrando <strong>${filtered.length}</strong> de ${total} para "<span class="results-text-accent">${escHtml(searchQuery)}</span>"`;
-    } else if (currentCategory !== 'Todos') {
-      resultsCount.innerHTML = `<strong style="color:#d4ccdb;">${currentCategory}</strong>: <strong>${filtered.length}</strong> registros`;
-    } else {
-      resultsCount.innerHTML = `<strong>${filtered.length}</strong> registros confirmados en la base de datos`;
+    // Update results meta
+    if (resultsCount) {
+      if (searchQuery.trim()) {
+        resultsCount.textContent = `${filtered.length} de ${total} para "${searchQuery}"`;
+      } else if (currentCat !== 'Todos') {
+        resultsCount.textContent = `${filtered.length} registros`;
+      } else {
+        resultsCount.textContent = `${filtered.length} registros en la base de datos`;
+      }
     }
 
+    // Empty state
     if (filtered.length === 0) {
       itemsGrid.innerHTML = '';
-      emptyState.style.display = 'block';
+      if (faqGrid) faqGrid.innerHTML = '';
+      itemsGrid.style.display   = 'none';
+      if (faqGrid) faqGrid.style.display = 'none';
+      emptyState.style.display  = 'block';
       return;
     }
 
     emptyState.style.display = 'none';
 
-    // Separate FAQ from regular items when viewing All
-    let html = '';
-    if (!isFaqView && currentCategory === 'Todos') {
-      const regular = filtered.filter(i => i.type !== 'faq');
-      const faqs = filtered.filter(i => i.type === 'faq');
-      html += regular.map(item => renderNormalCard(item)).join('');
-      if (faqs.length > 0) {
-        html += `<div style="grid-column:1/-1; margin:10px 0 4px;">
-          <div class="module-box" style="margin-bottom:0;"><div class="module-header"><h2>Guía para Principiantes &amp; FAQ</h2></div></div>
-        </div>`;
-        html += faqs.map(item => renderFaqCard(item)).join('');
+    if (isFaqView) {
+      // FAQ view: use faq-grid (2 col), hide items-grid
+      itemsGrid.style.display = 'none';
+      itemsGrid.innerHTML = '';
+      if (faqGrid) {
+        faqGrid.style.display = 'grid';
+        faqGrid.innerHTML = filtered.map(item =>
+          item.type === 'faq' ? renderFaqCard(item) : renderNormalCard(item)
+        ).join('');
       }
-    } else if (isFaqView || (searchQuery && filtered.some(i => i.type === 'faq'))) {
-      // Render FAQs as accordion, others as normal cards
-      const faqs = filtered.filter(i => i.type === 'faq');
-      const regular = filtered.filter(i => i.type !== 'faq');
-      html += regular.map(item => renderNormalCard(item)).join('');
-      html += faqs.map(item => renderFaqCard(item)).join('');
     } else {
-      html = filtered.map(item => renderNormalCard(item)).join('');
-    }
+      // Normal view: use catalog-grid (3-4 col)
+      if (faqGrid) { faqGrid.style.display = 'none'; faqGrid.innerHTML = ''; }
+      itemsGrid.style.display = 'grid';
 
-    itemsGrid.innerHTML = html;
+      const regular = filtered.filter(i => i.type !== 'faq');
+      const faqs    = filtered.filter(i => i.type === 'faq');
+
+      let html = regular.map(item => renderNormalCard(item)).join('');
+
+      // In "Todos" or search, append FAQs with separator
+      if (faqs.length > 0) {
+        html += `
+          <div style="grid-column:1/-1; margin:16px 0 4px;">
+            <div style="background:var(--header-bar-bg);border-radius:var(--radius-sm);
+              padding:5px 12px;display:inline-block;">
+              <span style="font-family:var(--font-title);font-weight:800;font-size:12px;
+                letter-spacing:.08em;text-transform:uppercase;color:var(--header-bar-text);">
+                GUÍA PARA PRINCIPIANTES & PREGUNTAS FRECUENTES
+              </span>
+            </div>
+          </div>
+          <div style="grid-column:1/-1;" id="faq-inline-wrapper">
+            <div class="faq-grid" id="faq-inline">
+              ${faqs.map(item => renderFaqCard(item)).join('')}
+            </div>
+          </div>`;
+      }
+
+      itemsGrid.innerHTML = html;
+    }
   }
 
   // =====================================================
   // SHARE
   // =====================================================
   async function handleShare(title, summary, btn) {
-    const url = window.location.href.split('#')[0];
-    const text = `🌴 LEONIDA HUB — GTA 6\n${title}\n${summary}\n🔗 ${url}`;
+    const url  = window.location.href.split('#')[0];
+    const text = `LEONIDA HUB — GTA 6\n${title}\n${summary}\n${url}`;
     let ok = false;
     try {
       if (navigator.clipboard && window.isSecureContext) {
@@ -376,54 +383,65 @@
       } catch (e) {}
     }
     const orig = btn.innerHTML;
-    btn.textContent = '✓ ¡Copiado!';
+    btn.innerHTML = `<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      COPIADO`;
     btn.classList.add('copied');
-    showToast('¡Copiado para compartir!');
+    showToast('Copiado para compartir');
     setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1800);
   }
 
   // =====================================================
-  // ACTIVE CATEGORY — sync tabs and sidebar
+  // SET CATEGORY — syncs top nav tabs
   // =====================================================
   function setCategory(cat) {
-    currentCategory = cat;
-
-    // Sync top nav tabs
+    currentCat = cat;
     document.querySelectorAll('#topnav-tabs .nav-tab').forEach(btn => {
-      const tabCat = btn.getAttribute('data-category');
-      btn.classList.toggle('active', tabCat === cat || (cat === 'Todos' && btn.dataset.tab === 'todos'));
-      btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+      const c = btn.getAttribute('data-category');
+      const isActive = c === cat;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
-
-    // Sync sidebar nav
-    document.querySelectorAll('#sidebar-nav-buttons .sidebar-nav-item').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-category') === cat);
-    });
-
     renderItems();
   }
 
   // =====================================================
-  // SEARCH SYNC (desktop ↔ mobile)
+  // SEARCH HANDLER
   // =====================================================
   function handleSearch(val) {
     searchQuery = val;
-    // Sync both inputs
     if (searchInputDesktop && searchInputDesktop.value !== val) searchInputDesktop.value = val;
-    if (searchInputMobile && searchInputMobile.value !== val) searchInputMobile.value = val;
-    // Show/hide clear btn
+    if (searchInputMobile  && searchInputMobile.value  !== val) searchInputMobile.value  = val;
     if (clearSearchBtn) clearSearchBtn.style.display = val ? 'flex' : 'none';
     renderItems();
   }
 
-  // =====================================================
-  // RESET ALL
-  // =====================================================
   function resetAll() {
     handleSearch('');
     setCategory('Todos');
     if (hideSavedToggle) hideSavedToggle.checked = false;
     hideSaved = false;
+  }
+
+  // =====================================================
+  // SAVE BUTTON HANDLER (button, not checkbox)
+  // =====================================================
+  function handleSaveToggle(btn) {
+    const id = btn.getAttribute('data-id');
+    if (!id) return;
+    if (savedItems.has(id)) {
+      savedItems.delete(id);
+      btn.classList.remove('saved');
+      btn.querySelector('.save-label').textContent = 'GUARDAR';
+      showToast('Eliminado de favoritos');
+    } else {
+      savedItems.add(id);
+      btn.classList.add('saved');
+      btn.querySelector('.save-label').textContent = 'GUARDADO';
+      showToast('Guardado en favoritos');
+    }
+    persistSaved();
+    if (hideSaved) renderItems();
   }
 
   // =====================================================
@@ -456,16 +474,6 @@
       });
     }
 
-    // Sidebar nav
-    if (sidebarNavBtns) {
-      sidebarNavBtns.addEventListener('click', e => {
-        const btn = e.target.closest('.sidebar-nav-item');
-        if (!btn) return;
-        const cat = btn.getAttribute('data-category');
-        if (cat) setCategory(cat);
-      });
-    }
-
     // Hide saved toggle
     if (hideSavedToggle) {
       hideSavedToggle.addEventListener('change', e => {
@@ -478,7 +486,7 @@
     if (resetMarksBtn) {
       resetMarksBtn.addEventListener('click', () => {
         if (savedItems.size === 0) { showToast('No hay fichas guardadas.'); return; }
-        if (confirm('¿Reiniciar todas las marcas de guardado?')) {
+        if (confirm('Reiniciar todas las marcas de guardado?')) {
           savedItems.clear(); persistSaved(); renderItems();
           showToast('Marcas eliminadas');
         }
@@ -496,68 +504,60 @@
       logoHome.addEventListener('click', e => { e.preventDefault(); resetAll(); });
     }
 
-    // Grid: delegated events (save checkbox, share btn, faq accordion)
-    if (itemsGrid) {
-      // Checkbox: save / unsave
-      itemsGrid.addEventListener('change', e => {
-        const cb = e.target.closest('.save-checkbox');
-        if (!cb) return;
-        const id = cb.getAttribute('data-id');
-        if (cb.checked) {
-          savedItems.add(id);
-          showToast('Guardado en favoritos');
-        } else {
-          savedItems.delete(id);
-        }
-        persistSaved();
+    // Grid: delegated events (save btn, share btn, faq accordion)
+    function setupGridListeners(grid) {
+      if (!grid) return;
+      grid.addEventListener('click', e => {
+        // Save button
+        const saveBtn = e.target.closest('.save-btn');
+        if (saveBtn) { handleSaveToggle(saveBtn); return; }
 
-        // Update label inline
-        const lbl = cb.parentElement.querySelector('.save-label');
-        if (lbl) {
-          lbl.textContent = cb.checked ? '✓ Guardado' : 'Guardar';
-          lbl.style.color = cb.checked ? '#68b68d' : '#6a6075';
-          lbl.style.fontWeight = cb.checked ? '600' : '400';
-        }
-
-        // Toggle card dim if hide-saved active
-        if (hideSaved) renderItems();
-      });
-
-      // Share button
-      itemsGrid.addEventListener('click', e => {
+        // Share button
         const shareBtn = e.target.closest('.share-btn');
         if (shareBtn) {
-          const title   = shareBtn.getAttribute('data-title');
-          const summary = shareBtn.getAttribute('data-summary');
-          handleShare(title, summary, shareBtn);
+          handleShare(
+            shareBtn.getAttribute('data-title'),
+            shareBtn.getAttribute('data-summary'),
+            shareBtn
+          );
           return;
         }
 
         // FAQ accordion toggle
         const faqToggle = e.target.closest('.faq-toggle');
         if (faqToggle) {
-          const id    = faqToggle.getAttribute('data-faq-id');
-          const card  = document.getElementById(`card-${id}`);
+          const id   = faqToggle.getAttribute('data-faq-id');
+          const card = document.getElementById(`card-${id}`);
           if (!card) return;
           const isOpen = card.classList.contains('open');
-          // Close all others
-          document.querySelectorAll('.faq-card.open').forEach(c => {
+          // Close all others in same container
+          const container = card.closest('.faq-grid, #faq-inline') || document;
+          container.querySelectorAll('.faq-card.open').forEach(c => {
             c.classList.remove('open');
             const btn = c.querySelector('.faq-toggle');
             if (btn) btn.setAttribute('aria-expanded', 'false');
           });
-          // Open clicked if was closed
           if (!isOpen) {
             card.classList.add('open');
             faqToggle.setAttribute('aria-expanded', 'true');
-            // Smooth scroll to card on mobile
-            if (window.innerWidth < 900) {
+            if (window.innerWidth < 800) {
               setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
             }
           }
         }
       });
     }
+
+    setupGridListeners(itemsGrid);
+    setupGridListeners(faqGrid);
+
+    // Also handle delegated events on dynamically injected inline faq
+    document.addEventListener('click', e => {
+      const inlineFaq = document.getElementById('faq-inline');
+      if (!inlineFaq) return;
+      // Events bubble up; just ensure faq-inline is handled
+      // (already handled by document-level if not caught by itemsGrid)
+    });
 
     // Support modal
     if (supportBtn && supportModal && closeModalBtn) {
