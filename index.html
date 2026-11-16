@@ -1,353 +1,350 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LEONIDA // Base de Datos & Guía Oficial GTA 6</title>
-  <meta name="description" content="Base de datos táctica y registro pre-lanzamiento de GTA 6 en Leonida y Vice City. Distritos confirmados, vehículos, emisoras de radio y trucos oficiales.">
-  <meta name="theme-color" content="#09090b">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌴</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEONIDA HUB — Base de Datos GTA 6 · Vice City</title>
+  <meta name="description" content="Wiki editorial de GTA 6: distritos de Vice City & Leonida, vehículos confirmados, radios, trucos y guía de preguntas frecuentes para principiantes.">
+  <meta name="theme-color" content="#18151f">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='8' fill='%239e4756'/><text y='.88em' font-size='70' x='14' font-family='sans-serif' font-weight='900' fill='white'>VI</text></svg>">
 
-  <!-- Tailwind CSS via CDN -->
+  <!-- Tailwind CSS via CDN (utility classes for spacing/flex utilities only) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            'neon-pink': '#ff2a85',
-            'neon-cyan': '#00f0ff',
-            'vice-dark': '#09090b',
-            'vice-surface': '#121217',
-            'vice-card': '#181820',
-            'vice-border': '#272733'
-          }
-        }
-      }
+      corePlugins: { preflight: false },
+      theme: { extend: {} }
     }
   </script>
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-vice-dark text-zinc-100 flex flex-col min-h-screen antialiased selection:bg-[#ff2a85] selection:text-white pb-10">
 
-  <!-- IN-GAME PHONE INSPIRED TOP STATUS BAR -->
-  <div class="w-full bg-[#060608] border-b border-white/[0.06] px-4 py-1.5 flex items-center justify-between text-[11px] font-mono text-zinc-400 select-none">
-    <div class="flex items-center gap-2">
-      <span id="phone-clock" class="font-bold text-zinc-200">08:57 AM</span>
-      <span class="text-zinc-600">•</span>
-      <span class="text-neon-cyan tracking-wider flex items-center gap-1.5 font-semibold text-[10px]">
-        <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan pulse-indicator"></span>
-        LEONIDA OS 6.0
-      </span>
+<body>
+
+  <!-- AD SLOT TOP (HIDDEN UNTIL CODE IS INSERTED) -->
+  <!-- AD_SLOT_TOP -->
+  <div id="ad-slot-top" class="ad-slot-container" style="display:none;"></div>
+  <!-- /AD_SLOT_TOP -->
+
+  <!-- ================================================
+       TOP NAVIGATION BAR
+       ================================================ -->
+  <div id="topbar">
+    <div class="topbar-inner">
+
+      <!-- Logo -->
+      <a class="site-logo" href="#" id="logo-home">
+        <div class="logo-icon">VI</div>
+        <div class="logo-text">LEONIDA<span>HUB</span></div>
+      </a>
+
+      <!-- Nav Tabs -->
+      <nav class="topnav-tabs" id="topnav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="todos" data-category="Todos" role="tab" aria-selected="true">Base de Datos</button>
+        <button class="nav-tab" data-tab="trucos" data-category="Trucos (19 Nov)" role="tab" aria-selected="false">Trucos (19 Nov)</button>
+        <button class="nav-tab" data-tab="tips" data-category="Tips & FAQ" role="tab" aria-selected="false">Tips & FAQ</button>
+      </nav>
+
+      <!-- Top Search Bar (Desktop) -->
+      <div class="topbar-search">
+        <div class="search-wrap">
+          <input type="text" id="search-input" placeholder="Buscar..." autocomplete="off" aria-label="Buscar en la base de datos">
+          <button id="clear-search-btn" class="search-clear-btn" title="Borrar" aria-label="Borrar búsqueda">✕</button>
+        </div>
+      </div>
+
     </div>
-    <div class="flex items-center gap-3 text-[10px] text-zinc-400">
-      <span class="flex items-center gap-1 text-zinc-300 font-semibold">
-        <span>📶</span> 5G
-      </span>
-      <span class="flex items-center gap-1 text-zinc-300 font-semibold">
-        <span>🔋</span> 98%
-      </span>
-      <span class="hidden sm:inline text-zinc-500 font-medium">VICE CITY, LE</span>
+
+    <!-- Mobile Search Bar (< 600px) -->
+    <div class="mobile-search-bar">
+      <input type="text" id="search-input-mobile" placeholder="Buscar distritos, vehículos, radios, tips..." autocomplete="off" aria-label="Búsqueda en mobile">
     </div>
   </div>
 
-  <!-- HEADER SECTION -->
-  <header class="sticky top-0 z-40 bg-[#09090b]/92 backdrop-blur-md border-b border-white/[0.08] px-4 py-3 transition-all">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      
-      <!-- Brand Logo & Title -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff2a85] to-[#00f0ff] p-[2px] shadow-lg shadow-[#ff2a85]/20 flex-shrink-0">
-          <div class="w-full h-full bg-[#09090b] rounded-[10px] flex items-center justify-center font-vice font-black text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#ff2a85] to-[#00f0ff]">
-            VI
-          </div>
+  <!-- ================================================
+       MAIN LAYOUT (3 columns)
+       ================================================ -->
+  <div class="main-wrapper" id="main-wrapper">
+
+    <!-- ========== LEFT SIDEBAR ========== -->
+    <aside class="sidebar-left" id="sidebar-left">
+
+      <!-- Explorar -->
+      <div class="module-box">
+        <div class="module-header">
+          <h2>Explorar</h2>
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-vice font-extrabold text-xl sm:text-2xl tracking-wider text-white flex items-center">
-              LEONIDA<span class="text-neon-pink">HUB</span>
-            </h1>
-            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest bg-zinc-800/80 text-zinc-300 border border-white/10 uppercase">
-              VICE CITY
-            </span>
-          </div>
-          <p class="text-[11px] text-zinc-400 font-medium tracking-tight">GUÍA TÁCTICA & REGISTRO PRE-LANZAMIENTO</p>
-        </div>
-      </div>
-
-      <!-- Quick Progress Pill -->
-      <div id="progress-summary" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">
-        <span class="text-zinc-500 text-[11px]">Guardados:</span>
-        <span id="progress-count" class="font-bold text-neon-cyan">0/8</span>
-      </div>
-
-    </div>
-  </header>
-
-  <main class="flex-grow max-w-4xl w-full mx-auto px-4 pt-4 sm:pt-5">
-
-    <!-- AD CONTAINER: TOP SLOT (HIDDEN BY DEFAULT UNTIL CODE IS INSERTED) -->
-    <!-- AD_SLOT_TOP -->
-    <div id="ad-slot-top" class="ad-slot-container" style="display: none;"></div>
-    <!-- /AD_SLOT_TOP -->
-
-    <!-- COUNTDOWN TIMER BANNER (TARGET: 19 NOV 2026 00:00) -->
-    <section class="mb-5 rounded-2xl bg-gradient-to-r from-zinc-900/90 via-[#13121d]/90 to-zinc-900/90 border border-white/[0.08] p-3.5 sm:p-4 shadow-xl relative overflow-hidden">
-      <!-- Subtle ambient glow -->
-      <div class="absolute -top-10 -right-10 w-28 h-28 bg-[#ff2a85]/10 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-[#00f0ff]/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
-        <div class="flex items-center gap-3 text-center sm:text-left">
-          <div class="w-10 h-10 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center text-xl flex-shrink-0">
-            🌴
-          </div>
-          <div>
-            <div class="text-[11px] uppercase font-mono tracking-widest text-neon-pink font-bold flex items-center justify-center sm:justify-start gap-1.5">
-              <span>Lanzamiento Mundial en:</span>
-            </div>
-            <div class="text-xs text-zinc-400 font-medium">
-              19 de Noviembre de 2026 • 00:00 UTC
-            </div>
-          </div>
-        </div>
-
-        <!-- Minimalist Segmented Digital Countdown -->
-        <div id="countdown-timer" class="flex items-center gap-1.5 sm:gap-2 font-mono text-center select-none">
-          <div class="bg-black/60 border border-white/10 rounded-xl px-2.5 py-1.5 min-w-[56px]">
-            <span id="cd-days" class="block font-bold text-base sm:text-lg text-white font-mono-code leading-none">000</span>
-            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-sans">DÍAS</span>
-          </div>
-          <span class="text-zinc-600 font-bold">:</span>
-          <div class="bg-black/60 border border-white/10 rounded-xl px-2 py-1.5 min-w-[48px]">
-            <span id="cd-hours" class="block font-bold text-base sm:text-lg text-neon-cyan font-mono-code leading-none">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-sans">HORAS</span>
-          </div>
-          <span class="text-zinc-600 font-bold">:</span>
-          <div class="bg-black/60 border border-white/10 rounded-xl px-2 py-1.5 min-w-[48px]">
-            <span id="cd-mins" class="block font-bold text-base sm:text-lg text-zinc-200 font-mono-code leading-none">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-sans">MIN</span>
-          </div>
-          <span class="text-zinc-600 font-bold">:</span>
-          <div class="bg-black/60 border border-white/10 rounded-xl px-2 py-1.5 min-w-[48px]">
-            <span id="cd-secs" class="block font-bold text-base sm:text-lg text-neon-pink font-mono-code leading-none">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-sans">SEG</span>
+        <div class="module-body" style="padding: 6px 0;">
+          <div id="sidebar-nav-buttons">
+            <button class="sidebar-nav-item active" data-category="Todos">
+              <span class="nav-icon">🌴</span> Todos
+              <span class="sidebar-count" id="count-todos">—</span>
+            </button>
+            <button class="sidebar-nav-item" data-category="Ubicaciones">
+              <span class="nav-icon">📍</span> Distritos & Mapa
+              <span class="sidebar-count" id="count-ubicaciones">—</span>
+            </button>
+            <button class="sidebar-nav-item" data-category="Vehículos">
+              <span class="nav-icon">🏎️</span> Vehículos
+              <span class="sidebar-count" id="count-vehiculos">—</span>
+            </button>
+            <button class="sidebar-nav-item" data-category="Radios & Música">
+              <span class="nav-icon">📻</span> Radios & Música
+              <span class="sidebar-count" id="count-musica">—</span>
+            </button>
+            <div class="sidebar-divider"></div>
+            <button class="sidebar-nav-item" data-category="Trucos (19 Nov)">
+              <span class="nav-icon">🔒</span> Trucos (19 Nov)
+              <span class="sidebar-count" id="count-trucos">—</span>
+            </button>
+            <button class="sidebar-nav-item" data-category="Tips & FAQ">
+              <span class="nav-icon">💡</span> Tips & FAQ
+              <span class="sidebar-count" id="count-faq">—</span>
+            </button>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- SEARCH & CATEGORY FILTERS -->
-    <section class="space-y-3.5 mb-5">
-      
-      <!-- Instant Real-Time Search Bar -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+      <!-- GTA VI Info -->
+      <div class="module-box">
+        <div class="module-header">
+          <h2>GTA VI</h2>
         </div>
-        
-        <input 
-          type="text" 
-          id="search-input" 
-          placeholder="Buscar distritos, vehículos, emisoras de radio o trucos..." 
-          autocomplete="off"
-          class="w-full pl-11 pr-20 py-3 rounded-xl bg-zinc-900/90 border border-zinc-800 focus:border-neon-cyan focus:outline-none focus:ring-1 focus:ring-neon-cyan/40 text-white placeholder-zinc-500 text-sm font-normal shadow-inner transition-colors duration-200"
-          aria-label="Buscar en la base de datos"
-        >
-
-        <!-- Clear Button & Keyboard Badge -->
-        <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5">
-          <button 
-            id="clear-search-btn" 
-            type="button" 
-            class="hidden text-zinc-400 hover:text-white p-1 rounded-md transition-colors"
-            title="Borrar búsqueda"
-            aria-label="Borrar texto de búsqueda"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+        <div class="module-body" style="padding: 6px 0;">
+          <button class="sidebar-nav-item" style="cursor:default;">
+            <span class="nav-icon">🗺️</span> <span style="font-size:11px;">Leonida / Florida</span>
           </button>
-          <span class="hidden sm:inline-block text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">/</span>
+          <button class="sidebar-nav-item" style="cursor:default;">
+            <span class="nav-icon">📅</span> <span style="font-size:11px;">19 Nov 2026</span>
+          </button>
+          <button class="sidebar-nav-item" style="cursor:default;">
+            <span class="nav-icon">🎮</span> <span style="font-size:11px;">PS5 · Xbox · PC</span>
+          </button>
+          <button class="sidebar-nav-item" style="cursor:default;">
+            <span class="nav-icon">🌊</span> <span style="font-size:11px;">Vice City · Keys</span>
+          </button>
         </div>
       </div>
 
-      <!-- Category Filter Pills (Horizontal Scroll on Mobile) -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar touch-pan-x" id="category-filters" role="tablist">
-        <button 
-          data-category="Todos" 
-          class="filter-pill active px-3.5 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs sm:text-sm font-semibold text-zinc-300 flex items-center gap-1.5 flex-shrink-0"
-          role="tab"
-          aria-selected="true"
-        >
-          <span>🌴</span> Todos
-          <span class="count-badge ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-black/40 text-zinc-300">8</span>
-        </button>
+    </aside>
 
-        <button 
-          data-category="Ubicaciones" 
-          class="filter-pill px-3.5 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs sm:text-sm font-semibold text-zinc-300 hover:border-zinc-700 flex items-center gap-1.5 flex-shrink-0"
-          role="tab"
-          aria-selected="false"
-        >
-          <span class="text-neon-cyan">📍</span> Distritos & Mapa
-          <span class="count-badge ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-800 text-zinc-400">2</span>
-        </button>
+    <!-- ========== CENTER MAIN CONTENT ========== -->
+    <main id="main-content">
 
-        <button 
-          data-category="Vehículos" 
-          class="filter-pill px-3.5 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs sm:text-sm font-semibold text-zinc-300 hover:border-zinc-700 flex items-center gap-1.5 flex-shrink-0"
-          role="tab"
-          aria-selected="false"
-        >
-          <span>🏎️</span> Vehículos
-          <span class="count-badge ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-800 text-zinc-400">3</span>
-        </button>
+      <!-- BENTO: Destacados & Lanzamiento -->
+      <div id="featured-section">
+        <div class="module-box" style="margin-bottom: 10px;">
+          <div class="module-header">
+            <h2>Últimas Novedades &amp; Destacados</h2>
+            <span style="font-size:10px; font-weight:600; color:#111; opacity:.6;">ROCKSTAR GAMES · 2026</span>
+          </div>
+        </div>
 
-        <button 
-          data-category="Radios & Música" 
-          class="filter-pill px-3.5 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs sm:text-sm font-semibold text-zinc-300 hover:border-zinc-700 flex items-center gap-1.5 flex-shrink-0"
-          role="tab"
-          aria-selected="false"
-        >
-          <span>📻</span> Radios & Música
-          <span class="count-badge ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-800 text-zinc-400">2</span>
-        </button>
+        <div class="bento-grid">
 
-        <button 
-          data-category="Trucos (19 Nov)" 
-          class="filter-pill px-3.5 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs sm:text-sm font-semibold text-zinc-300 hover:border-zinc-700 flex items-center gap-1.5 flex-shrink-0"
-          role="tab"
-          aria-selected="false"
-        >
-          <span class="text-amber-400">🔒</span> Trucos (19 Nov)
-          <span class="count-badge ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-800 text-zinc-400">1</span>
-        </button>
+          <!-- Main feature card -->
+          <div class="bento-main">
+            <span class="bento-label">🌴 Lanzamiento Oficial</span>
+            <div class="bento-title">GTA 6 &mdash;<br>Vice City &amp; Leonida</div>
+            <div class="bento-desc">El mayor open-world de Rockstar Games. Juega como Jason &amp; Lucia en el Estado de Leonida, con Vice City como epicentro del crimen, lujo y caos tropical.</div>
+          </div>
+
+          <!-- Right column: countdown + mini info -->
+          <div class="bento-right">
+
+            <div class="countdown-box">
+              <div class="countdown-header">🕐 Lanzamiento Mundial en:</div>
+              <div class="countdown-body">
+                <div class="cd-seg">
+                  <span class="cd-num" id="cd-days">000</span>
+                  <span class="cd-label">Días</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-seg">
+                  <span class="cd-num" id="cd-hours">00</span>
+                  <span class="cd-label">Horas</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-seg">
+                  <span class="cd-num" id="cd-mins">00</span>
+                  <span class="cd-label">Min</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-seg">
+                  <span class="cd-num" id="cd-secs">00</span>
+                  <span class="cd-label">Seg</span>
+                </div>
+              </div>
+              <div class="countdown-date">19 Noviembre 2026 · 00:00 UTC</div>
+            </div>
+
+            <div class="mini-info-box">
+              <div class="mini-icon">🗺️</div>
+              <div>
+                <span class="mini-label">Mapa Confirmado</span>
+                <span class="mini-val">Vice City + Leonida Keys</span>
+              </div>
+            </div>
+
+            <div class="mini-info-box">
+              <div class="mini-icon">🎭</div>
+              <div>
+                <span class="mini-label">Protagonistas</span>
+                <span class="mini-val">Jason &amp; Lucia</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
 
-      <!-- Quick status / Clean status row -->
-      <div class="flex items-center justify-between text-xs text-zinc-400 px-1">
-        <div id="results-count" class="font-medium text-zinc-400">
-          Cargando catálogo...
+      <!-- CATALOG HEADER -->
+      <div class="module-box" style="margin-top: 10px; margin-bottom: 6px;">
+        <div class="module-header" id="catalog-header">
+          <h2 id="catalog-title">Base de Datos de Trucos, Secretos &amp; Vehículos</h2>
         </div>
-        <div class="flex items-center gap-3">
-          <label class="flex items-center gap-1.5 cursor-pointer select-none text-[11px] text-zinc-400 hover:text-zinc-200">
-            <input type="checkbox" id="hide-completed-toggle" class="w-3.5 h-3.5 rounded bg-zinc-900 border-zinc-700 text-neon-pink focus:ring-0 focus:ring-offset-0 cursor-pointer">
-            <span>Ocultar guardados</span>
+      </div>
+
+      <!-- Results bar -->
+      <div class="results-bar" id="results-bar">
+        <div id="results-count" style="font-size:11px; color: #9b93ab;">Cargando...</div>
+        <div class="results-controls">
+          <label>
+            <input type="checkbox" id="hide-saved-toggle"> Ocultar guardados
           </label>
-          <button id="reset-progress-btn" class="text-[11px] text-zinc-500 hover:text-rose-400 transition-colors" title="Reiniciar marcas">
-            Limpiar marcas
-          </button>
+          <button id="reset-marks-btn">Limpiar marcas</button>
         </div>
       </div>
 
-    </section>
-
-    <!-- CARDS GRID CONTAINER -->
-    <section id="items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4" aria-live="polite">
-      <!-- Cards rendered dynamically via app.js -->
-    </section>
-
-    <!-- EMPTY STATE VIEW -->
-    <div id="empty-state" class="hidden text-center py-12 px-4">
-      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-zinc-900 flex items-center justify-center text-2xl border border-zinc-800">
-        🔍
-      </div>
-      <h3 class="text-sm font-bold text-white mb-1">Sin coincidencias en Leonida</h3>
-      <p class="text-xs text-zinc-400 max-w-sm mx-auto mb-3">
-        No se encontraron registros con ese término. Intenta con otra palabra clave o restablece los filtros.
-      </p>
-      <button id="reset-all-filters-btn" class="px-3.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition-colors">
-        Ver todos los registros
-      </button>
-    </div>
-
-    <!-- AD CONTAINER: BOTTOM SLOT (HIDDEN BY DEFAULT UNTIL CODE IS INSERTED) -->
-    <!-- AD_SLOT_BOTTOM -->
-    <div id="ad-slot-bottom" class="ad-slot-container" style="display: none;"></div>
-    <!-- /AD_SLOT_BOTTOM -->
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="mt-auto border-t border-zinc-900 bg-zinc-950/90 backdrop-blur-md px-4 py-6 text-zinc-500 text-xs">
-    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      
-      <!-- Copyright & Disclaimer -->
-      <div class="text-center sm:text-left space-y-1">
-        <p class="font-semibold text-zinc-300">
-          Leonida VI Hub &copy; 2026 • Registro Comunitario
-        </p>
-        <p class="text-[11px] text-zinc-500">
-          Proyecto informativo no oficial. Grand Theft Auto y Rockstar Games son marcas registradas de Take-Two Interactive.
-        </p>
+      <!-- ITEMS GRID (dynamic) -->
+      <div id="items-grid" class="catalog-grid">
+        <!-- Cards injected by app.js -->
       </div>
 
-      <!-- Support Button (Discreet Project Support) -->
-      <div class="flex items-center gap-3">
-        <button 
-          id="support-btn" 
-          type="button" 
-          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-neon-pink/50 text-zinc-400 hover:text-white text-xs font-medium shadow-sm transition-all duration-200 group"
-          title="Apoyar el proyecto"
-        >
-          <span class="text-sm group-hover:scale-125 transition-transform duration-200">☕</span>
-          <span>Apoyar el proyecto</span>
-        </button>
+      <!-- EMPTY STATE -->
+      <div id="empty-state">
+        <div class="es-icon">🔍</div>
+        <h3>Sin coincidencias en Leonida</h3>
+        <p>No se encontraron registros con ese término. Intenta con otra palabra o restablece los filtros.</p>
+        <button id="reset-all-filters-btn">Ver todos los registros</button>
       </div>
 
-    </div>
+    </main>
+
+    <!-- ========== RIGHT SIDEBAR WIDGETS ========== -->
+    <aside class="sidebar-right">
+
+      <!-- Estado -->
+      <div class="module-box">
+        <div class="module-header">
+          <h2>Estado del Juego</h2>
+        </div>
+        <div class="module-body widget-status">
+          <div class="status-row">
+            <span class="status-label">Estado</span>
+            <span class="status-val"><span class="status-dot"></span>Pre-lanzamiento</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Plataformas</span>
+            <span class="status-val">PS5 · Xbox</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Studio</span>
+            <span class="status-val">Rockstar Games</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Registros DB</span>
+            <span class="status-val" id="total-items-count">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Redes Sociales -->
+      <div class="module-box">
+        <div class="module-header">
+          <h2>Seguir la Comunidad</h2>
+        </div>
+        <div class="module-body widget-links">
+          <a href="https://tiktok.com" target="_blank" rel="noopener">
+            <span class="wl-icon">🎵</span>
+            <span class="wl-label">TikTok</span>
+            <span class="wl-arrow">↗</span>
+          </a>
+          <a href="https://youtube.com" target="_blank" rel="noopener">
+            <span class="wl-icon">📺</span>
+            <span class="wl-label">YouTube Shorts</span>
+            <span class="wl-arrow">↗</span>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener">
+            <span class="wl-icon">📸</span>
+            <span class="wl-label">Instagram</span>
+            <span class="wl-arrow">↗</span>
+          </a>
+          <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener">
+            <span class="wl-icon">⭐</span>
+            <span class="wl-label">GitHub</span>
+            <span class="wl-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tip del Día -->
+      <div class="module-box">
+        <div class="module-header">
+          <h2>Tip Destacado del Día</h2>
+        </div>
+        <div class="module-body tip-of-day">
+          <strong>💡 Pro Tip — Vice City</strong>
+          Los vehículos robados en Ocean Drive durante el horario nocturno (10 PM–4 AM) tienen un 40% más de valor en el mercado negro de los talleres de Venetian Islands.
+        </div>
+      </div>
+
+    </aside>
+
+  </div><!-- /main-wrapper -->
+
+  <!-- ================================================
+       FOOTER
+       ================================================ -->
+  <footer>
+    <strong>Leonida VI Hub</strong> &copy; 2026 &mdash; Base de datos comunitaria no oficial.
+    Grand Theft Auto &amp; Rockstar Games son marcas registradas de Take-Two Interactive Software, Inc.
+    <br>
+    <button class="footer-support-btn" id="support-btn">☕ Apoyar el proyecto</button>
   </footer>
 
-  <!-- TOAST NOTIFICATION COMPONENT -->
-  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-900/95 border border-neon-cyan/50 text-white text-xs font-medium shadow-2xl backdrop-blur-md">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neon-cyan flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-    </svg>
+  <!-- AD SLOT BOTTOM (HIDDEN) -->
+  <!-- AD_SLOT_BOTTOM -->
+  <div id="ad-slot-bottom" class="ad-slot-container" style="display:none;"></div>
+  <!-- /AD_SLOT_BOTTOM -->
+
+  <!-- TOAST -->
+  <div id="toast">
+    <span class="toast-dot"></span>
     <span id="toast-message">Copiado al portapapeles</span>
   </div>
 
   <!-- SUPPORT MODAL -->
-  <div id="support-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-card max-w-sm w-full rounded-2xl p-5 border border-zinc-700/80 shadow-2xl text-center space-y-3.5 relative">
-      <button id="close-modal-btn" class="absolute top-3.5 right-3.5 text-zinc-400 hover:text-white p-1" aria-label="Cerrar modal">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
-      <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-[#ff2a85] to-[#00f0ff] p-0.5 mx-auto">
-        <div class="w-full h-full bg-zinc-900 rounded-full flex items-center justify-center text-lg">
-          🌴
+  <div id="support-modal">
+    <div class="modal-box">
+      <div class="modal-header-bar">
+        <h3>🌴 Apoyar Leonida Hub</h3>
+        <button class="modal-close-btn" id="close-modal-btn" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Este portal comunitario es 100% gratuito. Tu aporte mantiene los servidores y actualiza la base de datos en tiempo real antes y después del lanzamiento.</p>
+        <div class="modal-actions">
+          <a href="https://ko-fi.com" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">☕ Invitar un café en Ko-fi</a>
+          <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener" class="modal-btn modal-btn-secondary">⭐ GitHub — Ver código fuente</a>
         </div>
-      </div>
-
-      <div>
-        <h3 class="text-sm font-bold text-white">¡Gracias por apoyar Leonida Hub!</h3>
-        <p class="text-xs text-zinc-400 mt-1">
-          Esta plataforma comunitaria es 100% libre de anuncios invasivos. Tu aporte ayuda a mantener el hosting y preparar los servidores para el lanzamiento.
-        </p>
-      </div>
-
-      <div class="space-y-2 pt-1">
-        <a href="https://ko-fi.com" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-[#ff2a85] hover:bg-[#e01970] text-white text-xs font-bold transition-all shadow-md shadow-[#ff2a85]/30">
-          <span>☕</span> Invitar un café en Ko-fi
-        </a>
-        <a href="https://github.com/kilmess/leonida-hub" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-all">
-          <span>⭐</span> Ver código en GitHub
-        </a>
       </div>
     </div>
   </div>
 
-  <!-- JavaScript App Logic -->
+  <!-- App Logic -->
   <script src="app.js"></script>
+
 </body>
 </html>

@@ -1,601 +1,597 @@
 /**
- * LEONIDA VI - Tactical Database & Pre-Launch Companion
- * Ultra-fast Vanilla JavaScript logic
+ * LEONIDA VI HUB — GTA.wiki Editorial Style
+ * Vanilla JavaScript — Full Data & UI Logic
  */
 
 (function () {
   'use strict';
 
-  // Constants & Storage
-  const STORAGE_KEY = 'leonida_vi_completed_items';
-  // Target: 19 de Noviembre de 2026 a las 00:00:00
-  const TARGET_LAUNCH_DATE = new Date('2026-11-19T00:00:00');
+  // =====================================================
+  // CONSTANTS
+  // =====================================================
+  const STORAGE_KEY = 'leonida_vi_saved';
+  const LAUNCH_DATE = new Date('2026-11-19T00:00:00');
 
-  // State
+  // Category meta
+  const CATEGORY_META = {
+    'Ubicaciones': { id: 'ubicaciones', badgeClass: 'badge-ubicaciones', label: 'DISTRITO' },
+    'Vehículos':   { id: 'vehiculos',   badgeClass: 'badge-vehiculos',   label: 'VEHÍCULO' },
+    'Radios & Música': { id: 'musica',  badgeClass: 'badge-musica',      label: 'RADIO / MÚSICA' },
+    'Trucos (19 Nov)': { id: 'trucos',  badgeClass: 'badge-trucos',      label: 'TRUCOS' },
+    'Tips & FAQ': { id: 'faq',          badgeClass: 'badge-faq',         label: 'TIPS & FAQ' },
+  };
+
+  const CATALOG_HEADER_LABELS = {
+    'Todos': 'Base de Datos de Trucos, Secretos &amp; Vehículos',
+    'Ubicaciones': 'Distritos &amp; Zonas de Leonida — Confirmados',
+    'Vehículos': 'Vehículos Confirmados en GTA VI',
+    'Radios & Música': 'Emisoras &amp; Banda Sonora Oficial',
+    'Trucos (19 Nov)': 'Base de Datos de Trucos — Se Desbloquean el 19 Nov 2026',
+    'Tips & FAQ': 'Guía para Principiantes &amp; Preguntas Frecuentes',
+  };
+
+  // =====================================================
+  // STATE
+  // =====================================================
   let itemsData = [];
   let currentCategory = 'Todos';
   let searchQuery = '';
-  let hideCompleted = false;
-  let completedItems = new Set();
+  let hideSaved = false;
+  let savedItems = new Set();
 
-  // DOM Elements
-  const itemsGrid = document.getElementById('items-grid');
-  const searchInput = document.getElementById('search-input');
-  const clearSearchBtn = document.getElementById('clear-search-btn');
-  const categoryFilters = document.getElementById('category-filters');
-  const resultsCount = document.getElementById('results-count');
-  const emptyState = document.getElementById('empty-state');
-  const progressSummary = document.getElementById('progress-summary');
-  const progressCount = document.getElementById('progress-count');
-  const hideCompletedToggle = document.getElementById('hide-completed-toggle');
-  const resetProgressBtn = document.getElementById('reset-progress-btn');
+  // =====================================================
+  // DOM REFERENCES
+  // =====================================================
+  const itemsGrid        = document.getElementById('items-grid');
+  const resultsCount     = document.getElementById('results-count');
+  const emptyState       = document.getElementById('empty-state');
+  const catalogTitle     = document.getElementById('catalog-title');
+  const totalItemsCount  = document.getElementById('total-items-count');
+  const hideSavedToggle  = document.getElementById('hide-saved-toggle');
+  const resetMarksBtn    = document.getElementById('reset-marks-btn');
   const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toast-message');
-  const supportBtn = document.getElementById('support-btn');
-  const supportModal = document.getElementById('support-modal');
-  const closeModalBtn = document.getElementById('close-modal-btn');
-  const phoneClock = document.getElementById('phone-clock');
-  const cdDays = document.getElementById('cd-days');
+  const toast            = document.getElementById('toast');
+  const toastMessage     = document.getElementById('toast-message');
+  const supportBtn       = document.getElementById('support-btn');
+  const supportModal     = document.getElementById('support-modal');
+  const closeModalBtn    = document.getElementById('close-modal-btn');
+
+  // Search inputs (desktop & mobile)
+  const searchInputDesktop = document.getElementById('search-input');
+  const searchInputMobile  = document.getElementById('search-input-mobile');
+  const clearSearchBtn     = document.getElementById('clear-search-btn');
+
+  // Nav elements
+  const topnavTabs       = document.getElementById('topnav-tabs');
+  const sidebarNavBtns   = document.getElementById('sidebar-nav-buttons');
+
+  // Countdown
+  const cdDays  = document.getElementById('cd-days');
   const cdHours = document.getElementById('cd-hours');
-  const cdMins = document.getElementById('cd-mins');
-  const cdSecs = document.getElementById('cd-secs');
+  const cdMins  = document.getElementById('cd-mins');
+  const cdSecs  = document.getElementById('cd-secs');
 
-  // In-Game Phone Clock
-  function updatePhoneClock() {
-    if (!phoneClock) return;
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
-    phoneClock.textContent = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
-  }
+  // Sidebar counts
+  const sidebarCounts = {
+    'Todos':          document.getElementById('count-todos'),
+    'Ubicaciones':    document.getElementById('count-ubicaciones'),
+    'Vehículos':      document.getElementById('count-vehiculos'),
+    'Radios & Música': document.getElementById('count-musica'),
+    'Trucos (19 Nov)': document.getElementById('count-trucos'),
+    'Tips & FAQ':     document.getElementById('count-faq'),
+  };
 
-  // Real-time Countdown Timer (Target: 19 Nov 2026 00:00)
-  function updateCountdown() {
-    if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
-    const now = new Date();
-    const diff = TARGET_LAUNCH_DATE.getTime() - now.getTime();
-
-    if (diff <= 0) {
-      cdDays.textContent = '000';
-      cdHours.textContent = '00';
-      cdMins.textContent = '00';
-      cdSecs.textContent = '00';
-      return;
-    }
-
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    cdDays.textContent = String(days).padStart(3, '0');
-    cdHours.textContent = String(hours).padStart(2, '0');
-    cdMins.textContent = String(minutes).padStart(2, '0');
-    cdSecs.textContent = String(seconds).padStart(2, '0');
-  }
-
-  // LocalStorage Management
-  function loadCompletedFromStorage() {
+  // =====================================================
+  // LOCAL STORAGE
+  // =====================================================
+  function loadSaved() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          completedItems = new Set(parsed);
-        }
+        if (Array.isArray(parsed)) savedItems = new Set(parsed);
       }
-    } catch (e) {
-      console.warn('No se pudo acceder a localStorage:', e);
-      completedItems = new Set();
-    }
+    } catch (e) { savedItems = new Set(); }
   }
 
-  function saveCompletedToStorage() {
+  function persistSaved() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...completedItems]));
-    } catch (e) {
-      console.warn('Error al guardar en localStorage:', e);
-    }
-    updateProgressDisplay();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedItems]));
+    } catch (e) {}
+    updateTotalCount();
   }
 
-  // Toast Notification
+  // =====================================================
+  // COUNTDOWN TIMER
+  // =====================================================
+  function tickCountdown() {
+    if (!cdDays) return;
+    const diff = LAUNCH_DATE - new Date();
+    if (diff <= 0) {
+      cdDays.textContent = '000'; cdHours.textContent = '00';
+      cdMins.textContent = '00';  cdSecs.textContent = '00';
+      return;
+    }
+    const s = Math.floor(diff / 1000);
+    cdDays.textContent  = String(Math.floor(s / 86400)).padStart(3, '0');
+    cdHours.textContent = String(Math.floor((s % 86400) / 3600)).padStart(2, '0');
+    cdMins.textContent  = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+    cdSecs.textContent  = String(s % 60).padStart(2, '0');
+  }
+
+  // =====================================================
+  // TOAST
+  // =====================================================
   let toastTimer = null;
-  function showToast(message) {
+  function showToast(msg) {
     if (toastTimer) clearTimeout(toastTimer);
-    toastMessage.textContent = message;
+    toastMessage.textContent = msg;
     toast.classList.add('show');
-    toast.classList.remove('opacity-0');
-    toastTimer = setTimeout(() => {
-      toast.classList.remove('show');
-      toast.classList.add('opacity-0');
-    }, 2200);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
   }
 
-  // Progress counter in header
-  function updateProgressDisplay() {
-    const total = itemsData.length;
-    const completed = completedItems.size;
-    if (progressCount) {
-      progressCount.textContent = `${completed}/${total}`;
-    }
-    if (progressSummary && total > 0) {
-      progressSummary.classList.remove('hidden');
-    }
-  }
-
-  // Fetch Data from data.json
+  // =====================================================
+  // DATA LOADING
+  // =====================================================
   async function loadData() {
     try {
-      resultsCount.textContent = 'Cargando base de datos de Leonida...';
-      const response = await fetch('data.json');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      itemsData = await response.json();
-      updateCategoryCounts();
-      updateProgressDisplay();
+      resultsCount.textContent = 'Cargando base de datos...';
+      const resp = await fetch('data.json');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      itemsData = await resp.json();
+      updateSidebarCounts();
+      updateTotalCount();
       renderItems();
-    } catch (error) {
-      console.error('Error cargando data.json:', error);
-      resultsCount.textContent = 'Error al cargar la información.';
+    } catch (err) {
+      console.error('data.json error:', err);
+      resultsCount.textContent = 'Error cargando la base de datos.';
       itemsGrid.innerHTML = `
-        <div class="col-span-full p-6 text-center rounded-2xl bg-rose-950/30 border border-rose-900/50 text-rose-300">
-          <p class="font-bold">No se pudo cargar data.json</p>
-          <p class="text-xs mt-1 text-zinc-400">Verifica que data.json exista en la raíz del proyecto.</p>
-        </div>
-      `;
+        <div style="padding:20px; text-align:center; color:#f08080; border:1px solid #5c3636; border-radius:4px; background:#2a1a1a;">
+          <strong>No se pudo cargar data.json</strong><br>
+          <span style="font-size:11px; color:#888;">Verifica que el servidor local esté activo (puerto 8080).</span>
+        </div>`;
     }
   }
 
-  // Category counts badge updater
-  function updateCategoryCounts() {
-    const counts = {
-      'Todos': itemsData.length,
-      'Ubicaciones': 0,
-      'Vehículos': 0,
-      'Radios & Música': 0,
-      'Trucos (19 Nov)': 0
-    };
-
-    itemsData.forEach(item => {
-      if (counts[item.category] !== undefined) {
-        counts[item.category]++;
-      }
-    });
-
-    const pills = categoryFilters.querySelectorAll('.filter-pill');
-    pills.forEach(pill => {
-      const cat = pill.getAttribute('data-category');
-      const badge = pill.querySelector('.count-badge');
-      if (badge && counts[cat] !== undefined) {
-        badge.textContent = counts[cat];
-      }
-    });
+  // =====================================================
+  // SIDEBAR + HEADER COUNTS
+  // =====================================================
+  function updateSidebarCounts() {
+    const counts = { 'Todos': itemsData.length, 'Ubicaciones': 0, 'Vehículos': 0, 'Radios & Música': 0, 'Trucos (19 Nov)': 0, 'Tips & FAQ': 0 };
+    itemsData.forEach(item => { if (counts[item.category] !== undefined) counts[item.category]++; });
+    Object.entries(sidebarCounts).forEach(([cat, el]) => { if (el) el.textContent = counts[cat] ?? '0'; });
   }
 
-  // Helper: Category badge styling
-  function getCategoryBadge(item) {
-    const cat = item.category;
-    if (cat === 'Ubicaciones') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-950/80 text-neon-cyan border border-sky-800/40">📍 DISTRITO</span>`;
-    }
-    if (cat === 'Vehículos') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-950/80 text-amber-300 border border-amber-800/40">🏎️ VEHÍCULO</span>`;
-    }
-    if (cat === 'Radios & Música') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-fuchsia-950/80 text-neon-pink border border-fuchsia-800/40">📻 MÚSICA</span>`;
-    }
-    if (cat === 'Trucos (19 Nov)') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-800/40">🔒 TRUCOS</span>`;
-    }
-    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">${escapeHtml(item.badge || cat)}</span>`;
+  function updateTotalCount() {
+    if (totalItemsCount) totalItemsCount.textContent = itemsData.length;
   }
 
-  // Filter & Search Logic
-  function getFilteredItems() {
+  // =====================================================
+  // FILTERING
+  // =====================================================
+  function getFiltered() {
     const q = searchQuery.toLowerCase().trim();
-
     return itemsData.filter(item => {
-      // Category match
-      if (currentCategory !== 'Todos' && item.category !== currentCategory) {
-        return false;
-      }
-
-      // Hide completed toggle
-      if (hideCompleted && completedItems.has(item.id)) {
-        return false;
-      }
-
-      // Search match
+      if (currentCategory !== 'Todos' && item.category !== currentCategory) return false;
+      if (hideSaved && savedItems.has(item.id)) return false;
       if (q) {
-        const titleMatch = item.title && item.title.toLowerCase().includes(q);
-        const effectMatch = item.effect && item.effect.toLowerCase().includes(q);
-        const descMatch = item.description && item.description.toLowerCase().includes(q);
-        const catMatch = item.category && item.category.toLowerCase().includes(q);
-        const locMatch = item.location && item.location.toLowerCase().includes(q);
-        const tagsMatch = Array.isArray(item.tags) && item.tags.some(t => t.toLowerCase().includes(q));
-
-        if (!titleMatch && !effectMatch && !descMatch && !catMatch && !locMatch && !tagsMatch) {
-          return false;
-        }
+        const hay = [item.title, item.effect, item.description, item.category, item.location, ...(item.tags || [])]
+          .filter(Boolean).join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
       }
-
       return true;
     });
   }
 
-  // Render Compact Cards
-  function renderItems() {
-    const filtered = getFilteredItems();
+  // =====================================================
+  // HTML HELPERS
+  // =====================================================
+  function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
 
-    // Clean status text
+  function getCatBadge(item) {
+    const meta = CATEGORY_META[item.category];
+    if (!meta) return `<span class="item-cat-badge" style="background:rgba(90,80,110,0.4);color:#9b93ab;border:1px solid #3c344c;">${escHtml(item.category)}</span>`;
+    return `<span class="item-cat-badge ${meta.badgeClass}">${escHtml(item.badge || meta.label)}</span>`;
+  }
+
+  // Format multi-line FAQ description (numbered steps)
+  function formatFaqDescription(desc) {
+    if (!desc) return '';
+    return desc.split('\n').filter(l => l.trim()).map(line => `<p>${escHtml(line.trim())}</p>`).join('');
+  }
+
+  // =====================================================
+  // RENDER: Normal catalog item
+  // =====================================================
+  function renderNormalCard(item) {
+    const isSaved = savedItems.has(item.id);
+    const isLocked = item.category === 'Trucos (19 Nov)';
+    const confirmedDot = item.confirmed_in ? `<span class="item-confirmed"><span class="item-confirmed-dot"></span>${escHtml(item.confirmed_in)}</span>` : '';
+
+    return `
+      <div class="item-card" id="card-${item.id}" data-id="${item.id}">
+        <div class="item-card-header">
+          ${getCatBadge(item)}
+          ${confirmedDot}
+        </div>
+        <div class="item-card-body">
+          <div class="item-title">${escHtml(item.title)}</div>
+          <div class="item-effect">${escHtml(item.effect)}</div>
+          ${isLocked ? `
+            <div class="item-locked-banner">
+              🔒 <span>Trucos bloqueados — disponibles el <strong>19 de Noviembre de 2026</strong>.</span>
+            </div>
+          ` : ''}
+          ${item.description && !isLocked ? `<div class="item-desc">${escHtml(item.description)}</div>` : ''}
+          ${item.location ? `
+            <div class="item-location">
+              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              ${escHtml(item.location)}
+            </div>
+          ` : ''}
+        </div>
+        <div class="item-card-footer">
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;">
+            <input type="checkbox" class="save-checkbox" data-id="${item.id}" ${isSaved ? 'checked' : ''} style="accent-color:#68b68d;width:12px;height:12px;">
+            <span class="save-label" style="color:${isSaved ? '#68b68d' : '#6a6075'};font-weight:${isSaved ? '600' : '400'};">
+              ${isSaved ? '✓ Guardado' : 'Guardar'}
+            </span>
+          </label>
+          <button
+            class="card-action-btn btn-share share-btn"
+            data-id="${item.id}"
+            data-title="${escHtml(item.title)}"
+            data-summary="${escHtml(item.effect)}"
+          >
+            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+            </svg>
+            Compartir
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // =====================================================
+  // RENDER: FAQ Accordion card
+  // =====================================================
+  function renderFaqCard(item) {
+    const isSaved = savedItems.has(item.id);
+    return `
+      <div class="faq-card" id="card-${item.id}" data-id="${item.id}">
+        <button class="faq-toggle" data-faq-id="${item.id}" aria-expanded="false">
+          <span class="faq-toggle-icon">+</span>
+          <span class="faq-toggle-content">
+            <span class="faq-badge">${escHtml(item.badge || 'FAQ')}</span>
+            <span class="faq-question">${escHtml(item.title)}</span>
+          </span>
+          <span class="faq-toggle-arrow">▼</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-${item.id}">
+          <div class="faq-answer-steps">${formatFaqDescription(item.description)}</div>
+          <div class="faq-answer-footer">
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;">
+              <input type="checkbox" class="save-checkbox" data-id="${item.id}" ${isSaved ? 'checked' : ''} style="accent-color:#68b68d;width:12px;height:12px;">
+              <span class="save-label" style="color:${isSaved ? '#68b68d' : '#6a6075'};font-weight:${isSaved ? '600' : '400'};">
+                ${isSaved ? '✓ Guardado' : 'Guardar'}
+              </span>
+            </label>
+            <button
+              class="card-action-btn btn-share share-btn"
+              data-id="${item.id}"
+              data-title="${escHtml(item.title)}"
+              data-summary="${escHtml(item.effect)}"
+            >
+              <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+              </svg>
+              Compartir
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // =====================================================
+  // RENDER ITEMS (main)
+  // =====================================================
+  function renderItems() {
+    const filtered = getFiltered();
+    const total = itemsData.length;
+    const isFaqView = currentCategory === 'Tips & FAQ';
+
+    // Update catalog header
+    if (catalogTitle) {
+      catalogTitle.innerHTML = CATALOG_HEADER_LABELS[currentCategory] || CATALOG_HEADER_LABELS['Todos'];
+    }
+
+    // Update results bar
     if (searchQuery.trim()) {
-      resultsCount.innerHTML = `Mostrando <strong class="text-white">${filtered.length}</strong> de ${itemsData.length} registros para "<span class="text-neon-cyan">${escapeHtml(searchQuery)}</span>"`;
+      resultsCount.innerHTML = `Mostrando <strong>${filtered.length}</strong> de ${total} para "<span class="results-text-accent">${escHtml(searchQuery)}</span>"`;
     } else if (currentCategory !== 'Todos') {
-      resultsCount.innerHTML = `<strong class="text-neon-pink">${currentCategory}</strong>: <strong class="text-white">${filtered.length}</strong> registros confirmados`;
+      resultsCount.innerHTML = `<strong style="color:#d4ccdb;">${currentCategory}</strong>: <strong>${filtered.length}</strong> registros`;
     } else {
-      resultsCount.innerHTML = `<strong class="text-white">${filtered.length}</strong> registros oficiales confirmados`;
+      resultsCount.innerHTML = `<strong>${filtered.length}</strong> registros confirmados en la base de datos`;
     }
 
     if (filtered.length === 0) {
       itemsGrid.innerHTML = '';
-      emptyState.classList.remove('hidden');
+      emptyState.style.display = 'block';
       return;
     }
 
-    emptyState.classList.add('hidden');
+    emptyState.style.display = 'none';
 
-    const html = filtered.map(item => {
-      const isCompleted = completedItems.has(item.id);
-      const catBadge = getCategoryBadge(item);
-      const isLockedCheat = item.category === 'Trucos (19 Nov)';
-
-      return `
-        <article 
-          class="glass-card p-3.5 sm:p-4 flex flex-col justify-between relative overflow-hidden group ${isCompleted ? 'is-completed' : ''}" 
-          id="card-${item.id}"
-          data-id="${item.id}"
-        >
-          <!-- Top subtle glow highlight bar -->
-          <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff2a85]/35 to-[#00f0ff]/35 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-          <div>
-            <!-- Top Meta Row -->
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                ${catBadge}
-                ${item.badge ? `
-                  <span class="text-[9px] font-mono tracking-wider text-zinc-400 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
-                    ${escapeHtml(item.badge)}
-                  </span>
-                ` : ''}
-              </div>
-
-              ${item.location ? `
-                <span class="text-[10px] text-zinc-400 flex items-center gap-1 truncate max-w-[45%]" title="${escapeHtml(item.location)}">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-neon-pink flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span class="truncate">${escapeHtml(item.location)}</span>
-                </span>
-              ` : ''}
-            </div>
-
-            <!-- Title -->
-            <h2 class="font-vice text-base sm:text-lg font-bold tracking-wide text-white group-hover:text-neon-cyan transition-colors mb-1.5 leading-snug">
-              ${escapeHtml(item.title)}
-            </h2>
-
-            <!-- Effect / Summary -->
-            <p class="text-xs text-zinc-300 mb-2 leading-relaxed">
-              ${escapeHtml(item.effect)}
-            </p>
-
-            <!-- Locked / Status Banner -->
-            ${isLockedCheat ? `
-              <div class="bg-amber-950/30 border border-amber-900/40 rounded-lg p-2 mb-2.5 flex items-center gap-2 text-[11px] text-amber-300">
-                <span class="text-sm">🔒</span>
-                <span>Se desbloquea a las 00:00 del <strong>19 de Noviembre de 2026</strong>.</span>
-              </div>
-            ` : ''}
-
-            <!-- Context / Description -->
-            ${item.description ? `
-              <p class="text-[11px] text-zinc-400 italic mb-3 leading-normal bg-black/30 p-2 rounded-lg border-l-2 border-neon-cyan/40">
-                ${escapeHtml(item.description)}
-              </p>
-            ` : ''}
-          </div>
-
-          <!-- Bottom Action Bar (Compact & Mobile-First) -->
-          <div class="pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2 mt-auto">
-            
-            <!-- Checkbox: Guardado / Visto -->
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none text-xs text-zinc-300 hover:text-white py-1">
-              <input 
-                type="checkbox" 
-                class="completed-checkbox w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-neon-cyan focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#00f0ff]"
-                data-id="${item.id}"
-                ${isCompleted ? 'checked' : ''}
-                aria-label="Guardar ficha"
-              >
-              <span class="text-[11px] font-medium text-zinc-400 group-hover:text-zinc-200">
-                ${isCompleted ? '<span class="text-emerald-400 font-semibold">✓ Guardado</span>' : 'Guardar'}
-              </span>
-            </label>
-
-            <!-- Discreet Share Button -->
-            <button 
-              type="button" 
-              class="share-btn inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 hover:border-zinc-700 transition-all duration-150 active:scale-95"
-              data-id="${item.id}"
-              data-title="${escapeHtml(item.title)}"
-              data-summary="${escapeHtml(item.effect)}"
-              title="Compartir ficha"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-neon-pink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              <span>Compartir</span>
-            </button>
-
-          </div>
-        </article>
-      `;
-    }).join('');
+    // Separate FAQ from regular items when viewing All
+    let html = '';
+    if (!isFaqView && currentCategory === 'Todos') {
+      const regular = filtered.filter(i => i.type !== 'faq');
+      const faqs = filtered.filter(i => i.type === 'faq');
+      html += regular.map(item => renderNormalCard(item)).join('');
+      if (faqs.length > 0) {
+        html += `<div style="grid-column:1/-1; margin:10px 0 4px;">
+          <div class="module-box" style="margin-bottom:0;"><div class="module-header"><h2>Guía para Principiantes &amp; FAQ</h2></div></div>
+        </div>`;
+        html += faqs.map(item => renderFaqCard(item)).join('');
+      }
+    } else if (isFaqView || (searchQuery && filtered.some(i => i.type === 'faq'))) {
+      // Render FAQs as accordion, others as normal cards
+      const faqs = filtered.filter(i => i.type === 'faq');
+      const regular = filtered.filter(i => i.type !== 'faq');
+      html += regular.map(item => renderNormalCard(item)).join('');
+      html += faqs.map(item => renderFaqCard(item)).join('');
+    } else {
+      html = filtered.map(item => renderNormalCard(item)).join('');
+    }
 
     itemsGrid.innerHTML = html;
   }
 
-  // Share functionality with Toast feedback
-  async function shareItem(title, summary, btn) {
-    const shareUrl = window.location.href.split('#')[0];
-    const textToShare = `🌴 GTA 6 Leonida Hub: ${title} — ${summary}\n🔗 ${shareUrl}`;
-
-    let copied = false;
+  // =====================================================
+  // SHARE
+  // =====================================================
+  async function handleShare(title, summary, btn) {
+    const url = window.location.href.split('#')[0];
+    const text = `🌴 LEONIDA HUB — GTA 6\n${title}\n${summary}\n🔗 ${url}`;
+    let ok = false;
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(textToShare);
-        copied = true;
+        await navigator.clipboard.writeText(text); ok = true;
       }
-    } catch (e) {
-      // Fallback
-    }
-
-    if (!copied) {
+    } catch (e) {}
+    if (!ok) {
       try {
-        const textarea = document.createElement('textarea');
-        textarea.value = textToShare;
-        textarea.style.position = 'fixed';
-        textarea.style.left = '-9999px';
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        copied = document.execCommand('copy');
-        document.body.removeChild(textarea);
-      } catch (e) {
-        console.warn('Fallback share error:', e);
-      }
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) {}
     }
-
-    // Button visual feedback
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-      </svg>
-      <span class="text-emerald-400 font-semibold">¡Copiado!</span>
-    `;
-    btn.classList.add('border-emerald-500/50', 'bg-emerald-950/30');
-
+    const orig = btn.innerHTML;
+    btn.textContent = '✓ ¡Copiado!';
+    btn.classList.add('copied');
     showToast('¡Copiado para compartir!');
-
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.classList.remove('border-emerald-500/50', 'bg-emerald-950/30');
-    }, 1800);
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1800);
   }
 
-  // Escape HTML helper
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+  // =====================================================
+  // ACTIVE CATEGORY — sync tabs and sidebar
+  // =====================================================
+  function setCategory(cat) {
+    currentCategory = cat;
+
+    // Sync top nav tabs
+    document.querySelectorAll('#topnav-tabs .nav-tab').forEach(btn => {
+      const tabCat = btn.getAttribute('data-category');
+      btn.classList.toggle('active', tabCat === cat || (cat === 'Todos' && btn.dataset.tab === 'todos'));
+      btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+    });
+
+    // Sync sidebar nav
+    document.querySelectorAll('#sidebar-nav-buttons .sidebar-nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-category') === cat);
+    });
+
+    renderItems();
   }
 
-  // Event Listeners
+  // =====================================================
+  // SEARCH SYNC (desktop ↔ mobile)
+  // =====================================================
+  function handleSearch(val) {
+    searchQuery = val;
+    // Sync both inputs
+    if (searchInputDesktop && searchInputDesktop.value !== val) searchInputDesktop.value = val;
+    if (searchInputMobile && searchInputMobile.value !== val) searchInputMobile.value = val;
+    // Show/hide clear btn
+    if (clearSearchBtn) clearSearchBtn.style.display = val ? 'flex' : 'none';
+    renderItems();
+  }
+
+  // =====================================================
+  // RESET ALL
+  // =====================================================
+  function resetAll() {
+    handleSearch('');
+    setCategory('Todos');
+    if (hideSavedToggle) hideSavedToggle.checked = false;
+    hideSaved = false;
+  }
+
+  // =====================================================
+  // EVENT LISTENERS
+  // =====================================================
   function setupListeners() {
-    // Search input
-    searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value;
-      if (searchQuery.length > 0) {
-        clearSearchBtn.classList.remove('hidden');
-      } else {
-        clearSearchBtn.classList.add('hidden');
-      }
-      renderItems();
-    });
 
-    // Clear search button
-    clearSearchBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      searchQuery = '';
-      clearSearchBtn.classList.add('hidden');
-      searchInput.focus();
-      renderItems();
-    });
+    // Desktop search
+    if (searchInputDesktop) {
+      searchInputDesktop.addEventListener('input', e => handleSearch(e.target.value));
+    }
 
-    // Category filter tabs
-    categoryFilters.addEventListener('click', (e) => {
-      const pill = e.target.closest('.filter-pill');
-      if (!pill) return;
+    // Mobile search
+    if (searchInputMobile) {
+      searchInputMobile.addEventListener('input', e => handleSearch(e.target.value));
+    }
 
-      const category = pill.getAttribute('data-category');
-      if (!category) return;
+    // Clear search
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => handleSearch(''));
+    }
 
-      categoryFilters.querySelectorAll('.filter-pill').forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-selected', 'false');
+    // Top nav tabs
+    if (topnavTabs) {
+      topnavTabs.addEventListener('click', e => {
+        const tab = e.target.closest('.nav-tab');
+        if (!tab) return;
+        const cat = tab.getAttribute('data-category');
+        if (cat) setCategory(cat);
       });
+    }
 
-      pill.classList.add('active');
-      pill.setAttribute('aria-selected', 'true');
-      currentCategory = category;
-      renderItems();
-    });
+    // Sidebar nav
+    if (sidebarNavBtns) {
+      sidebarNavBtns.addEventListener('click', e => {
+        const btn = e.target.closest('.sidebar-nav-item');
+        if (!btn) return;
+        const cat = btn.getAttribute('data-category');
+        if (cat) setCategory(cat);
+      });
+    }
 
-    // Hide completed toggle
-    if (hideCompletedToggle) {
-      hideCompletedToggle.addEventListener('change', (e) => {
-        hideCompleted = e.target.checked;
+    // Hide saved toggle
+    if (hideSavedToggle) {
+      hideSavedToggle.addEventListener('change', e => {
+        hideSaved = e.target.checked;
         renderItems();
       });
     }
 
-    // Reset progress button
-    if (resetProgressBtn) {
-      resetProgressBtn.addEventListener('click', () => {
-        if (completedItems.size === 0) {
-          showToast('No hay fichas guardadas.');
-          return;
-        }
-        if (confirm('¿Deseas reiniciar todas las marcas de guardado?')) {
-          completedItems.clear();
-          saveCompletedToStorage();
-          renderItems();
-          showToast('Marcas reiniciadas');
+    // Reset marks
+    if (resetMarksBtn) {
+      resetMarksBtn.addEventListener('click', () => {
+        if (savedItems.size === 0) { showToast('No hay fichas guardadas.'); return; }
+        if (confirm('¿Reiniciar todas las marcas de guardado?')) {
+          savedItems.clear(); persistSaved(); renderItems();
+          showToast('Marcas eliminadas');
         }
       });
     }
 
-    // Reset all filters in empty state
+    // Reset all filters (empty state btn)
     if (resetAllFiltersBtn) {
-      resetAllFiltersBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        searchQuery = '';
-        clearSearchBtn.classList.add('hidden');
-        currentCategory = 'Todos';
-        if (hideCompletedToggle) hideCompletedToggle.checked = false;
-        hideCompleted = false;
-
-        categoryFilters.querySelectorAll('.filter-pill').forEach(btn => {
-          if (btn.getAttribute('data-category') === 'Todos') {
-            btn.classList.add('active');
-            btn.setAttribute('aria-selected', 'true');
-          } else {
-            btn.classList.remove('active');
-            btn.setAttribute('aria-selected', 'false');
-          }
-        });
-
-        renderItems();
-      });
+      resetAllFiltersBtn.addEventListener('click', resetAll);
     }
 
-    // Grid delegated clicks (Share Button & Checkbox)
-    itemsGrid.addEventListener('click', (e) => {
-      // Share button click
-      const shareBtn = e.target.closest('.share-btn');
-      if (shareBtn) {
-        const title = shareBtn.getAttribute('data-title');
-        const summary = shareBtn.getAttribute('data-summary');
-        shareItem(title, summary, shareBtn);
-        return;
-      }
-    });
+    // Logo → reset
+    const logoHome = document.getElementById('logo-home');
+    if (logoHome) {
+      logoHome.addEventListener('click', e => { e.preventDefault(); resetAll(); });
+    }
 
-    // Checkbox toggle
-    itemsGrid.addEventListener('change', (e) => {
-      const checkbox = e.target.closest('.completed-checkbox');
-      if (checkbox) {
-        const id = checkbox.getAttribute('data-id');
-        const card = document.getElementById(`card-${id}`);
-
-        if (checkbox.checked) {
-          completedItems.add(id);
-          if (card) card.classList.add('is-completed');
+    // Grid: delegated events (save checkbox, share btn, faq accordion)
+    if (itemsGrid) {
+      // Checkbox: save / unsave
+      itemsGrid.addEventListener('change', e => {
+        const cb = e.target.closest('.save-checkbox');
+        if (!cb) return;
+        const id = cb.getAttribute('data-id');
+        if (cb.checked) {
+          savedItems.add(id);
           showToast('Guardado en favoritos');
         } else {
-          completedItems.delete(id);
-          if (card) card.classList.remove('is-completed');
+          savedItems.delete(id);
+        }
+        persistSaved();
+
+        // Update label inline
+        const lbl = cb.parentElement.querySelector('.save-label');
+        if (lbl) {
+          lbl.textContent = cb.checked ? '✓ Guardado' : 'Guardar';
+          lbl.style.color = cb.checked ? '#68b68d' : '#6a6075';
+          lbl.style.fontWeight = cb.checked ? '600' : '400';
         }
 
-        saveCompletedToStorage();
+        // Toggle card dim if hide-saved active
+        if (hideSaved) renderItems();
+      });
 
-        if (hideCompleted) {
-          renderItems();
-        } else {
-          const labelSpan = checkbox.parentElement.querySelector('span');
-          if (labelSpan) {
-            labelSpan.innerHTML = checkbox.checked
-              ? '<span class="text-emerald-400 font-semibold">✓ Guardado</span>'
-              : 'Guardar';
+      // Share button
+      itemsGrid.addEventListener('click', e => {
+        const shareBtn = e.target.closest('.share-btn');
+        if (shareBtn) {
+          const title   = shareBtn.getAttribute('data-title');
+          const summary = shareBtn.getAttribute('data-summary');
+          handleShare(title, summary, shareBtn);
+          return;
+        }
+
+        // FAQ accordion toggle
+        const faqToggle = e.target.closest('.faq-toggle');
+        if (faqToggle) {
+          const id    = faqToggle.getAttribute('data-faq-id');
+          const card  = document.getElementById(`card-${id}`);
+          if (!card) return;
+          const isOpen = card.classList.contains('open');
+          // Close all others
+          document.querySelectorAll('.faq-card.open').forEach(c => {
+            c.classList.remove('open');
+            const btn = c.querySelector('.faq-toggle');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+          });
+          // Open clicked if was closed
+          if (!isOpen) {
+            card.classList.add('open');
+            faqToggle.setAttribute('aria-expanded', 'true');
+            // Smooth scroll to card on mobile
+            if (window.innerWidth < 900) {
+              setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+            }
           }
-        }
-      }
-    });
-
-    // Support Modal
-    if (supportBtn && supportModal && closeModalBtn) {
-      supportBtn.addEventListener('click', () => {
-        supportModal.classList.remove('hidden');
-      });
-
-      closeModalBtn.addEventListener('click', () => {
-        supportModal.classList.add('hidden');
-      });
-
-      supportModal.addEventListener('click', (e) => {
-        if (e.target === supportModal) {
-          supportModal.classList.add('hidden');
         }
       });
     }
 
-    // Keyboard Shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        searchInput.focus();
-        searchInput.select();
-      }
+    // Support modal
+    if (supportBtn && supportModal && closeModalBtn) {
+      supportBtn.addEventListener('click', () => supportModal.classList.add('open'));
+      closeModalBtn.addEventListener('click', () => supportModal.classList.remove('open'));
+      supportModal.addEventListener('click', e => {
+        if (e.target === supportModal) supportModal.classList.remove('open');
+      });
+    }
 
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === '/' && document.activeElement !== searchInputDesktop && document.activeElement !== searchInputMobile) {
+        e.preventDefault();
+        (searchInputDesktop || searchInputMobile)?.focus();
+      }
       if (e.key === 'Escape') {
-        if (supportModal && !supportModal.classList.contains('hidden')) {
-          supportModal.classList.add('hidden');
-        } else if (searchInput.value) {
-          searchInput.value = '';
-          searchQuery = '';
-          clearSearchBtn.classList.add('hidden');
-          renderItems();
+        if (supportModal?.classList.contains('open')) {
+          supportModal.classList.remove('open');
+        } else if (searchQuery) {
+          handleSearch('');
         }
       }
     });
   }
 
-  // Timers setup
-  function setupTimers() {
-    updatePhoneClock();
-    updateCountdown();
-    setInterval(updatePhoneClock, 10000);
-    setInterval(updateCountdown, 1000);
-  }
-
-  // Entry Point
+  // =====================================================
+  // ENTRY POINT
+  // =====================================================
   function init() {
-    loadCompletedFromStorage();
-    setupTimers();
+    loadSaved();
     setupListeners();
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
     loadData();
   }
 
@@ -604,4 +600,5 @@
   } else {
     init();
   }
+
 })();
