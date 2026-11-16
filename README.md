@@ -1,6 +1,6 @@
-# 🌴 LEONIDA VI — Tactical Companion & Cheats Database
+# 🌴 LEONIDA VI — Tactical Database & Pre-Launch Companion
 
-Base de datos interactiva ultrarrápida y guía móvil para **Grand Theft Auto VI** (Vice City y Estado de Leonida).
+Base de datos interactiva y guía táctica comunitaria para **Grand Theft Auto VI** (Vice City y Estado de Leonida).
 
 Desarrollada con **HTML5 semántico**, **Tailwind CSS (CDN)** y **Vanilla JavaScript**.
 
@@ -8,50 +8,42 @@ Desarrollada con **HTML5 semántico**, **Tailwind CSS (CDN)** y **Vanilla JavaSc
 
 ## ⚡ Características Principales
 
-* 📱 **Mobile-First & Ultra Rápido**: Diseñado con botones táctiles grandes ($\ge 44\text{px}$) y arquitectura sin dependencias pesadas.
-* 🌴 **Estética Vice City Neon**: Tema oscuro profundo (`#09090b`) con acentos rosa neón (`#ff2a85`) y cian neón (`#00f0ff`).
-* 🔍 **Buscador en Tiempo Real**: Filtrado instantáneo por título, efecto, descripción, códigos o palabras clave.
+* 📱 **Interfaz Móvil Estilo In-Game OS**: Barra de estado superior inspirada en el teléfono del juego con reloj dinámico, señal 5G y batería.
+* ⏳ **Cuenta Regresiva en Tiempo Real**: Contador minimalista sincronizado para el lanzamiento mundial el **19 de Noviembre de 2026**.
+* 🌴 **Estética Vice City Neon**: Modo oscuro profundo (`#09090b`) con acentos rosa neón (`#ff2a85`) y cian neón (`#00f0ff`).
+* 🔍 **Buscador en Tiempo Real**: Filtrado ultra veloz por nombre, vehículo, distrito o estación de radio.
 * 🎮 **Filtros por Categoría**:
-  * 🌴 Todos
-  * 🟦 Trucos PS5 (con iconos y keycaps visuales de DualSense)
-  * 🟩 Trucos Xbox (con badges de controles Xbox Series X|S)
-  * 🏎️ Vehículos
-  * 🔮 Secretos y Misterios del mapa
-* 📋 **Copiado al Portapapeles con Feedback**: Botón táctil que confirma la copia con animación verde esmeralda y toast emergente.
-* 💾 **Progreso Persistente**: Checkbox *"Completado / Usado"* almacenado en `localStorage`.
-* 📢 **Espacios Publicitarios**: Contenedores señalizados `<!-- AD_SLOT_TOP -->` y `<!-- AD_SLOT_BOTTOM -->` listos para redes de anuncios.
-* ☕ **Apoyo Comunitario**: Modal discreto de donación y agradecimiento.
+  * 🌴 **Todos**
+  * 📍 **Distritos & Mapa**: Recreaciones confirmadas como *Ocean Drive* y *Port Gellhorn*.
+  * 🏎️ **Vehículos**: Modelos confirmados en avances como el *Bravado Banshee GTS* y el *Grotti Cheetah Classic*.
+  * 📻 **Radios & Música**: Banda sonora oficial (*Tom Petty - "Love Is A Long Road"*) y emisoras como *Wave 103*.
+  * 🔒 **Trucos (19 Nov)**: Espacio reservado para los códigos de PlayStation 5 y Xbox Series X|S listos para publicarse el día del lanzamiento.
+* 📤 **Botón Compartir**: Copia al portapapeles un resumen del elemento con enlace directo y confirmación visual.
+* 💾 **Progreso Persistente**: Marcado de favoritos / guardados sincronizado con `localStorage`.
+* 📢 **Slots Publicitarios Ocultos**: Contenedores `<!-- AD_SLOT_TOP -->` y `<!-- AD_SLOT_BOTTOM -->` limpios y ocultos por defecto hasta su uso.
+* ☕ **Apoyo Comunitario**: Modal discreto de soporte.
 
 ---
 
-## 📁 Estructura del Repositorio
+## 📁 Estructura del Proyecto
 
 ```text
 leonida/
 ├── index.html     # Estructura semántica, Tailwind CDN y componentes
-├── styles.css     # Estilos neon Vice City, keycaps y animaciones
-├── app.js         # Lógica Vanilla JS de búsqueda, filtros y localStorage
-├── data.json      # Base de datos externa editable
+├── styles.css     # Estilos neon Vice City, cards compactas y animaciones
+├── app.js         # Lógica de reloj, cuenta regresiva, filtros, búsqueda y share
+├── data.json      # Base de datos externa con información oficial confirmada
 └── README.md      # Documentación del proyecto
 ```
 
 ---
 
-## 🚀 Despliegue Rápido
+## 🚀 Despliegue
 
-Al ser una aplicación 100% estática, no requiere compilación previa (`build step`).
-
-Puedes servirla localmente con cualquier servidor HTTP:
-
-```bash
-# Con Python
-python -m http.server 8080
-
-# O abrir directamente index.html en el navegador
-```
+La aplicación es 100% estática y compatible con cualquier proveedor como **Vercel**, **Cloudflare Pages** o **GitHub Pages**.
 
 ---
 
 ## ⚖️ Aviso Legal
 
-*Este es un proyecto comunitario sin fines comerciales. Grand Theft Auto, Vice City y Rockstar Games son marcas registradas propiedad de Take-Two Interactive Software, Inc.*
+*Proyecto comunitario no oficial sin fines de lucro. Grand Theft Auto, Vice City y Rockstar Games son marcas registradas de Take-Two Interactive Software, Inc.*

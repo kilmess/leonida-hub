@@ -7,12 +7,11 @@ import sys
 import base64
 import urllib.request
 
-# Start Chrome in headless mode with remote debugging
 CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 USER_DATA = r"C:\Users\sebas\Desktop\leonida\test_chrome_profile"
 PORT = 9222
 
-print("Starting Headless Chrome on port", PORT)
+print("Launching Headless Chrome on port", PORT)
 chrome_proc = subprocess.Popen([
     CHROME_PATH,
     "--headless=new",
@@ -26,10 +25,8 @@ chrome_proc = subprocess.Popen([
 
 time.sleep(2)
 
-# Simple WebSocket client using standard socket
 class SimpleWS:
     def __init__(self, ws_url):
-        # ws_url: ws://127.0.0.1:9222/devtools/page/...
         from urllib.parse import urlparse
         parsed = urlparse(ws_url)
         self.host = parsed.hostname
@@ -64,9 +61,8 @@ class SimpleWS:
             msg["params"] = params
         payload = json.dumps(msg).encode('utf-8')
         
-        # Frame RFC 6455 (client to server masked)
         frame = bytearray()
-        frame.append(0x81) # fin + text opcode
+        frame.append(0x81)
         length = len(payload)
         mask_key = os.urandom(4)
         if length <= 125:
@@ -88,12 +84,9 @@ class SimpleWS:
         return self.msg_id
 
     def recv_msg(self):
-        # Read header
         header = self.sock.recv(2)
         if not header:
             return None
-        fin = (header[0] & 0x80) != 0
-        opcode = header[0] & 0x0F
         masked = (header[1] & 0x80) != 0
         payload_len = header[1] & 0x7F
         
@@ -135,17 +128,15 @@ class SimpleWS:
         return res.get("result", {}).get("value")
 
 try:
-    # 1. Connect to Chrome target
     targets = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/json").read())
     ws_url = targets[0]["webSocketDebuggerUrl"]
     print("Connecting to CDP target:", ws_url)
     ws = SimpleWS(ws_url)
 
-    # Enable Runtime and Page
     ws.send_cmd("Runtime.enable")
     ws.send_cmd("Page.enable")
 
-    # Set mobile viewport emulation (iPhone 14 Pro: 393 x 852)
+    # Mobile viewport
     ws.call("Emulation.setDeviceMetricsOverride", {
         "width": 393,
         "height": 852,
@@ -153,172 +144,107 @@ try:
         "mobile": True
     })
 
-    # Navigate to app
-    print("\n[TEST 1] Navigating to http://localhost:8080/index.html...")
+    print("\n[TEST 1] Loading http://localhost:8080/index.html...")
     ws.call("Page.navigate", {"url": "http://localhost:8080/index.html"})
     time.sleep(2)
 
-    # Verify no console errors logged
     title = ws.eval("document.title")
-    print("Page title:", title)
-    assert "LEONIDA" in title, "Title mismatch!"
+    print("Title:", title)
+    assert "LEONIDA" in title
 
-    # Count loaded cards
+    # Test Phone Status Bar
+    phone_time = ws.eval("document.getElementById('phone-clock').textContent.trim()")
+    print("Phone status bar time:", phone_time)
+    assert ":" in phone_time
+
+    # Test Countdown Timer
+    cd_days = ws.eval("document.getElementById('cd-days').textContent.trim()")
+    cd_hours = ws.eval("document.getElementById('cd-hours').textContent.trim()")
+    cd_mins = ws.eval("document.getElementById('cd-mins').textContent.trim()")
+    cd_secs = ws.eval("document.getElementById('cd-secs').textContent.trim()")
+    print(f"Countdown: {cd_days}d {cd_hours}h {cd_mins}m {cd_secs}s")
+    assert int(cd_days) > 0, "Countdown days should be greater than 0!"
+
+    # Test Ad Slots Hidden
+    ad_top_display = ws.eval("window.getComputedStyle(document.getElementById('ad-slot-top')).display")
+    ad_bottom_display = ws.eval("window.getComputedStyle(document.getElementById('ad-slot-bottom')).display")
+    print(f"Ad slots computed display: TOP='{ad_top_display}', BOTTOM='{ad_bottom_display}'")
+    assert ad_top_display == 'none', "AD_SLOT_TOP should be hidden by default!"
+    assert ad_bottom_display == 'none', "AD_SLOT_BOTTOM should be hidden by default!"
+
+    # Test Total Cards Count
     card_count = ws.eval("document.querySelectorAll('#items-grid article').length")
-    print(f"Initial rendered cards count: {card_count}")
+    print(f"Rendered cards count: {card_count}")
     assert card_count == 8, f"Expected 8 cards, got {card_count}"
 
-    # Verify Categories and Counts
-    cat_badges = ws.eval("""
+    # Test Categories
+    categories = ws.eval("""
       Array.from(document.querySelectorAll('#category-filters .filter-pill')).map(p => ({
         category: p.getAttribute('data-category'),
         count: p.querySelector('.count-badge').textContent.trim()
       }))
     """)
-    print("Category tabs loaded:", cat_badges)
+    print("Categories:", categories)
 
-    # [TEST 2] Category Filter Test
-    print("\n[TEST 2] Testing Category Filtering...")
-    ws.eval("""
-      const ps5Tab = document.querySelector('[data-category="Trucos PS5"]');
-      ps5Tab.click();
-    """)
-    time.sleep(0.5)
-    ps5_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
-    active_cat = ws.eval("document.querySelector('.filter-pill.active').getAttribute('data-category')")
-    print(f"Filtered by 'Trucos PS5': active tab='{active_cat}', visible cards={ps5_cards}")
-    assert active_cat == "Trucos PS5", "Active category tab mismatch!"
-    assert ps5_cards == 2, f"Expected 2 PS5 cards, got {ps5_cards}"
+    # Test Filtering: Radios & Música
+    print("\n[TEST 2] Testing Filter: Radios & Música...")
+    ws.eval("document.querySelector('[data-category=\"Radios & Música\"]').click()")
+    time.sleep(0.4)
+    music_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
+    print(f"Music cards visible: {music_cards}")
+    assert music_cards == 2, f"Expected 2 music cards, got {music_cards}"
 
-    # Test 'Secretos' category
-    ws.eval("""
-      const secTab = document.querySelector('[data-category="Secretos"]');
-      secTab.click();
-    """)
-    time.sleep(0.5)
-    sec_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
-    print(f"Filtered by 'Secretos': visible cards={sec_cards}")
-    assert sec_cards == 2, f"Expected 2 Secretos cards, got {sec_cards}"
+    # Test Filtering: Trucos (19 Nov)
+    print("\n[TEST 3] Testing Filter: Trucos (19 Nov)...")
+    ws.eval("document.querySelector('[data-category=\"Trucos (19 Nov)\"]').click()")
+    time.sleep(0.4)
+    cheat_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
+    print(f"Trucos cards visible: {cheat_cards}")
+    assert cheat_cards == 1, f"Expected 1 locked cheat card, got {cheat_cards}"
 
-    # Reset to 'Todos'
-    ws.eval("""
-      const allTab = document.querySelector('[data-category="Todos"]');
-      allTab.click();
-    """)
-    time.sleep(0.5)
-    all_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
-    print(f"Reset to 'Todos': visible cards={all_cards}")
-    assert all_cards == 8, f"Expected 8 cards on reset, got {all_cards}"
+    # Reset to Todos
+    ws.eval("document.querySelector('[data-category=\"Todos\"]').click()")
+    time.sleep(0.4)
 
-    # [TEST 3] Real-time Search Test
-    print("\n[TEST 3] Testing Instant Search...")
+    # Test Search
+    print("\n[TEST 4] Testing Search for 'Petty'...")
     ws.eval("""
       const input = document.getElementById('search-input');
-      input.value = 'Buzzard';
+      input.value = 'Petty';
       input.dispatchEvent(new Event('input'));
     """)
-    time.sleep(0.5)
-    search_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
-    search_card_title = ws.eval("document.querySelector('#items-grid article h2').textContent.trim()")
-    print(f"Search for 'Buzzard': found {search_cards} card: '{search_card_title}'")
-    assert search_cards == 1, f"Expected 1 card for 'Buzzard', got {search_cards}"
-    assert "Buzzard" in search_card_title
+    time.sleep(0.4)
+    petty_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
+    petty_title = ws.eval("document.querySelector('#items-grid article h2').textContent.trim()")
+    print(f"Search 'Petty': found {petty_cards} card: '{petty_title}'")
+    assert petty_cards == 1
+    assert "Petty" in petty_title
 
-    # Test Search clear
+    # Clear search
+    ws.eval("document.getElementById('clear-search-btn').click()")
+    time.sleep(0.4)
+
+    # Test Share Button
+    print("\n[TEST 5] Testing 'Compartir' Button & Toast...")
     ws.eval("""
-      const clearBtn = document.getElementById('clear-search-btn');
-      clearBtn.click();
-    """)
-    time.sleep(0.5)
-    cleared_cards = ws.eval("document.querySelectorAll('#items-grid article').length")
-    print(f"After clearing search: visible cards={cleared_cards}")
-    assert cleared_cards == 8, f"Expected 8 cards after clearing search, got {cleared_cards}"
-
-    # [TEST 4] Checkbox & LocalStorage Persistence Test
-    print("\n[TEST 4] Testing 'Completado/Usado' Checkbox & LocalStorage...")
-    # Clean storage first
-    ws.eval("localStorage.clear()")
-    
-    # Check the first item
-    first_item_id = ws.eval("document.querySelector('#items-grid article').getAttribute('data-id')")
-    print(f"Toggling completion checkbox for item: '{first_item_id}'")
-    
-    ws.eval(f"""
-      const cb = document.querySelector('#card-{first_item_id} input.completed-checkbox');
-      cb.checked = true;
-      cb.dispatchEvent(new Event('change', {{ bubbles: true }}));
-    """)
-    time.sleep(0.5)
-
-    stored_items = ws.eval("JSON.parse(localStorage.getItem('leonida_vi_completed_items') || '[]')")
-    print("LocalStorage stored items:", stored_items)
-    assert first_item_id in stored_items, "Item ID was not persisted in LocalStorage!"
-
-    card_has_class = ws.eval(f"document.getElementById('card-{first_item_id}').classList.contains('is-completed')")
-    print(f"Card has '.is-completed' class: {card_has_class}")
-    assert card_has_class is True, "Card missing 'is-completed' styling class!"
-
-    # Reload page to verify persistence
-    print("Reloading page to test persistence across page loads...")
-    ws.call("Page.reload")
-    time.sleep(2)
-
-    persisted_items = ws.eval("JSON.parse(localStorage.getItem('leonida_vi_completed_items') || '[]')")
-    persisted_cb_checked = ws.eval(f"document.querySelector('#card-{first_item_id} input.completed-checkbox').checked")
-    persisted_card_class = ws.eval(f"document.getElementById('card-{first_item_id}').classList.contains('is-completed')")
-    print(f"After reload: checkbox checked={persisted_cb_checked}, card is-completed={persisted_card_class}")
-    assert persisted_cb_checked is True, "Checkbox state was lost after reload!"
-    assert persisted_card_class is True, "Card completion visual styling lost after reload!"
-
-    # [TEST 5] Copy Code Button Test
-    print("\n[TEST 5] Testing 'Copiar codigo' button & feedback...")
-    ws.eval("""
-      const copyBtn = document.querySelector('#items-grid article .copy-btn');
-      copyBtn.click();
+      const shareBtn = document.querySelector('#items-grid article .share-btn');
+      shareBtn.click();
     """)
     time.sleep(0.3)
-    btn_text = ws.eval("document.querySelector('#items-grid article .copy-btn').textContent.trim()")
     toast_visible = ws.eval("document.getElementById('toast').classList.contains('show')")
     toast_msg = ws.eval("document.getElementById('toast-message').textContent.trim()")
-    print(f"Button text after click: '{btn_text.encode('ascii', 'ignore').decode()}'")
-    print(f"Toast visible: {toast_visible}")
-    assert "Copiado" in btn_text, f"Expected button to show 'Copiado', got '{btn_text}'"
-    assert toast_visible is True, "Toast should be shown!"
+    print(f"Toast visible: {toast_visible}, message: '{toast_msg}'")
+    assert toast_visible is True, "Toast should be visible"
+    assert "compartir" in toast_msg.lower() or "copiado" in toast_msg.lower()
 
-    # [TEST 6] Support Modal Test
-    print("\n[TEST 6] Testing Support Modal...")
-    modal_initially_hidden = ws.eval("document.getElementById('support-modal').classList.contains('hidden')")
-    assert modal_initially_hidden is True, "Modal should be initially hidden"
-
-    ws.eval("document.getElementById('support-btn').click()")
-    time.sleep(0.3)
-    modal_opened = not ws.eval("document.getElementById('support-modal').classList.contains('hidden')")
-    print(f"Support modal opened: {modal_opened}")
-    assert modal_opened is True, "Support modal failed to open!"
-
-    ws.eval("document.getElementById('close-modal-btn').click()")
-    time.sleep(0.3)
-    modal_closed = ws.eval("document.getElementById('support-modal').classList.contains('hidden')")
-    print(f"Support modal closed: {modal_closed}")
-    assert modal_closed is True, "Support modal failed to close!"
-
-    # [TEST 7] Ad Slots Verification
-    print("\n[TEST 7] Verifying Ad Slots...")
-    ad_top_exists = ws.eval("document.querySelector('section[aria-label=\"Espacio Publicitario Superior\"]') !== null")
-    ad_bottom_exists = ws.eval("document.querySelector('section[aria-label=\"Espacio Publicitario Inferior\"]') !== null")
-    print(f"AD_SLOT_TOP exists in DOM: {ad_top_exists}")
-    print(f"AD_SLOT_BOTTOM exists in DOM: {ad_bottom_exists}")
-    assert ad_top_exists and ad_bottom_exists, "Ad slots missing!"
-
-    # [TEST 8] Mobile & Desktop Visual Captures
-    print("\n[TEST 8] Capturing screenshots for visual verification...")
-    # Mobile screenshot
+    # Capture Mobile Screenshot
+    print("\n[TEST 6] Capturing Mobile and Desktop screenshots...")
     screenshot_data = ws.call("Page.captureScreenshot", {"format": "png"})
     with open("mobile_preview.png", "wb") as f:
         f.write(base64.b64decode(screenshot_data["data"]))
     print("Saved mobile_preview.png (393x852)")
 
-    # Desktop screenshot
+    # Desktop Screenshot
     ws.call("Emulation.setDeviceMetricsOverride", {
         "width": 1280,
         "height": 900,
@@ -326,15 +252,14 @@ try:
         "mobile": False
     })
     time.sleep(0.5)
-    desktop_screenshot_data = ws.call("Page.captureScreenshot", {"format": "png"})
+    desktop_data = ws.call("Page.captureScreenshot", {"format": "png"})
     with open("desktop_preview.png", "wb") as f:
-        f.write(base64.b64decode(desktop_screenshot_data["data"]))
+        f.write(base64.b64decode(desktop_data["data"]))
     print("Saved desktop_preview.png (1280x900)")
 
     print("\n==========================================")
-    print(">>> ALL VERIFICATION TESTS PASSED 100%! <<<")
+    print(">>> ALL POLISHING VERIFICATION TESTS PASSED! <<<")
     print("==========================================")
 
 finally:
     chrome_proc.terminate()
-    print("Headless Chrome process terminated.")

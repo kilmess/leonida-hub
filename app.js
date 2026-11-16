@@ -1,14 +1,16 @@
 /**
- * LEONIDA VI - Tactical Database Companion
+ * LEONIDA VI - Tactical Database & Pre-Launch Companion
  * Ultra-fast Vanilla JavaScript logic
  */
 
 (function () {
   'use strict';
 
-  // Constants & Storage Keys
+  // Constants & Storage
   const STORAGE_KEY = 'leonida_vi_completed_items';
-  
+  // Target: 19 de Noviembre de 2026 a las 00:00:00
+  const TARGET_LAUNCH_DATE = new Date('2026-11-19T00:00:00');
+
   // State
   let itemsData = [];
   let currentCategory = 'Todos';
@@ -33,8 +35,50 @@
   const supportBtn = document.getElementById('support-btn');
   const supportModal = document.getElementById('support-modal');
   const closeModalBtn = document.getElementById('close-modal-btn');
+  const phoneClock = document.getElementById('phone-clock');
+  const cdDays = document.getElementById('cd-days');
+  const cdHours = document.getElementById('cd-hours');
+  const cdMins = document.getElementById('cd-mins');
+  const cdSecs = document.getElementById('cd-secs');
 
-  // Initialize LocalStorage
+  // In-Game Phone Clock
+  function updatePhoneClock() {
+    if (!phoneClock) return;
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    phoneClock.textContent = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+  }
+
+  // Real-time Countdown Timer (Target: 19 Nov 2026 00:00)
+  function updateCountdown() {
+    if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
+    const now = new Date();
+    const diff = TARGET_LAUNCH_DATE.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      cdDays.textContent = '000';
+      cdHours.textContent = '00';
+      cdMins.textContent = '00';
+      cdSecs.textContent = '00';
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    cdDays.textContent = String(days).padStart(3, '0');
+    cdHours.textContent = String(hours).padStart(2, '0');
+    cdMins.textContent = String(minutes).padStart(2, '0');
+    cdSecs.textContent = String(seconds).padStart(2, '0');
+  }
+
+  // LocalStorage Management
   function loadCompletedFromStorage() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -72,7 +116,7 @@
     }, 2200);
   }
 
-  // Update Header Progress
+  // Progress counter in header
   function updateProgressDisplay() {
     const total = itemsData.length;
     const completed = completedItems.size;
@@ -87,7 +131,7 @@
   // Fetch Data from data.json
   async function loadData() {
     try {
-      resultsCount.textContent = 'Cargando datos de Leonida...';
+      resultsCount.textContent = 'Cargando base de datos de Leonida...';
       const response = await fetch('data.json');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,11 +142,11 @@
       renderItems();
     } catch (error) {
       console.error('Error cargando data.json:', error);
-      resultsCount.textContent = 'Error al cargar la base de datos.';
+      resultsCount.textContent = 'Error al cargar la información.';
       itemsGrid.innerHTML = `
         <div class="col-span-full p-6 text-center rounded-2xl bg-rose-950/30 border border-rose-900/50 text-rose-300">
           <p class="font-bold">No se pudo cargar data.json</p>
-          <p class="text-xs mt-1 text-zinc-400">Verifica que el archivo exista en la raíz y que el servidor web local esté activo.</p>
+          <p class="text-xs mt-1 text-zinc-400">Verifica que data.json exista en la raíz del proyecto.</p>
         </div>
       `;
     }
@@ -112,10 +156,10 @@
   function updateCategoryCounts() {
     const counts = {
       'Todos': itemsData.length,
-      'Trucos PS5': 0,
-      'Trucos Xbox': 0,
-      'Secretos': 0,
-      'Vehículos': 0
+      'Ubicaciones': 0,
+      'Vehículos': 0,
+      'Radios & Música': 0,
+      'Trucos (19 Nov)': 0
     };
 
     itemsData.forEach(item => {
@@ -134,30 +178,22 @@
     });
   }
 
-  // Helper: platform badge styling
-  function getPlatformBadge(category, platform) {
-    if (category.includes('PS5')) {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-950/90 text-sky-400 border border-sky-800/40">PLAYSTATION 5</span>`;
+  // Helper: Category badge styling
+  function getCategoryBadge(item) {
+    const cat = item.category;
+    if (cat === 'Ubicaciones') {
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-950/80 text-neon-cyan border border-sky-800/40">📍 DISTRITO</span>`;
     }
-    if (category.includes('Xbox')) {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-950/90 text-emerald-400 border border-emerald-800/40">XBOX SERIES X|S</span>`;
+    if (cat === 'Vehículos') {
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-950/80 text-amber-300 border border-amber-800/40">🏎️ VEHÍCULO</span>`;
     }
-    if (category === 'Secretos') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-950/90 text-purple-300 border border-purple-800/40">SECRETO / MAPA</span>`;
+    if (cat === 'Radios & Música') {
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-fuchsia-950/80 text-neon-pink border border-fuchsia-800/40">📻 MÚSICA</span>`;
     }
-    if (category === 'Vehículos') {
-      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-950/90 text-amber-300 border border-amber-800/40">VEHÍCULO</span>`;
+    if (cat === 'Trucos (19 Nov)') {
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-800/40">🔒 TRUCOS</span>`;
     }
-    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">${platform || 'GENERAL'}</span>`;
-  }
-
-  // Helper: render button keycaps
-  function renderKeycaps(keys) {
-    if (!Array.isArray(keys) || keys.length === 0) return '';
-    return keys.map(key => {
-      const cleanKey = key.trim();
-      return `<span class="keycap" data-key="${cleanKey}">${cleanKey}</span>`;
-    }).join('');
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">${escapeHtml(item.badge || cat)}</span>`;
   }
 
   // Filter & Search Logic
@@ -181,11 +217,10 @@
         const effectMatch = item.effect && item.effect.toLowerCase().includes(q);
         const descMatch = item.description && item.description.toLowerCase().includes(q);
         const catMatch = item.category && item.category.toLowerCase().includes(q);
-        const codeMatch = item.code && item.code.toLowerCase().includes(q);
         const locMatch = item.location && item.location.toLowerCase().includes(q);
         const tagsMatch = Array.isArray(item.tags) && item.tags.some(t => t.toLowerCase().includes(q));
 
-        if (!titleMatch && !effectMatch && !descMatch && !catMatch && !codeMatch && !locMatch && !tagsMatch) {
+        if (!titleMatch && !effectMatch && !descMatch && !catMatch && !locMatch && !tagsMatch) {
           return false;
         }
       }
@@ -194,17 +229,17 @@
     });
   }
 
-  // Render Grid Cards
+  // Render Compact Cards
   function renderItems() {
     const filtered = getFilteredItems();
 
-    // Update Status text
+    // Clean status text
     if (searchQuery.trim()) {
-      resultsCount.innerHTML = `Mostrando <strong class="text-white">${filtered.length}</strong> de ${itemsData.length} resultados para "<span class="text-neon-cyan">${escapeHtml(searchQuery)}</span>"`;
+      resultsCount.innerHTML = `Mostrando <strong class="text-white">${filtered.length}</strong> de ${itemsData.length} registros para "<span class="text-neon-cyan">${escapeHtml(searchQuery)}</span>"`;
     } else if (currentCategory !== 'Todos') {
-      resultsCount.innerHTML = `Filtrado por <strong class="text-neon-pink">${currentCategory}</strong>: <strong class="text-white">${filtered.length}</strong> disponibles`;
+      resultsCount.innerHTML = `<strong class="text-neon-pink">${currentCategory}</strong>: <strong class="text-white">${filtered.length}</strong> registros confirmados`;
     } else {
-      resultsCount.innerHTML = `Mostrando <strong class="text-white">${filtered.length}</strong> trucos y secretos disponibles`;
+      resultsCount.innerHTML = `<strong class="text-white">${filtered.length}</strong> registros oficiales confirmados`;
     }
 
     if (filtered.length === 0) {
@@ -217,24 +252,32 @@
 
     const html = filtered.map(item => {
       const isCompleted = completedItems.has(item.id);
-      const platformBadge = getPlatformBadge(item.category, item.platform);
-      const keycapsHtml = renderKeycaps(item.code_keys);
+      const catBadge = getCategoryBadge(item);
+      const isLockedCheat = item.category === 'Trucos (19 Nov)';
 
       return `
         <article 
-          class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group ${isCompleted ? 'is-completed' : ''}" 
+          class="glass-card p-3.5 sm:p-4 flex flex-col justify-between relative overflow-hidden group ${isCompleted ? 'is-completed' : ''}" 
           id="card-${item.id}"
           data-id="${item.id}"
         >
           <!-- Top subtle glow highlight bar -->
-          <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff2a85]/40 to-[#00f0ff]/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff2a85]/35 to-[#00f0ff]/35 opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
           <div>
-            <!-- Header: Category & Platform Badge -->
-            <div class="flex items-center justify-between gap-2 mb-2.5">
-              ${platformBadge}
+            <!-- Top Meta Row -->
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${catBadge}
+                ${item.badge ? `
+                  <span class="text-[9px] font-mono tracking-wider text-zinc-400 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
+                    ${escapeHtml(item.badge)}
+                  </span>
+                ` : ''}
+              </div>
+
               ${item.location ? `
-                <span class="text-[11px] text-zinc-400 flex items-center gap-1 truncate max-w-[50%]">
+                <span class="text-[10px] text-zinc-400 flex items-center gap-1 truncate max-w-[45%]" title="${escapeHtml(item.location)}">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-neon-pink flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -245,63 +288,61 @@
             </div>
 
             <!-- Title -->
-            <h2 class="font-vice text-lg sm:text-xl font-bold tracking-wide text-white group-hover:text-neon-cyan transition-colors mb-2 leading-tight">
+            <h2 class="font-vice text-base sm:text-lg font-bold tracking-wide text-white group-hover:text-neon-cyan transition-colors mb-1.5 leading-snug">
               ${escapeHtml(item.title)}
             </h2>
 
-            <!-- Effect description -->
-            <p class="text-xs sm:text-sm text-zinc-300 mb-3 leading-relaxed">
-              <span class="text-neon-pink font-semibold">Efecto:</span> ${escapeHtml(item.effect)}
+            <!-- Effect / Summary -->
+            <p class="text-xs text-zinc-300 mb-2 leading-relaxed">
+              ${escapeHtml(item.effect)}
             </p>
 
-            <!-- Code display / Keycaps container -->
-            <div class="bg-black/40 rounded-xl p-3 border border-zinc-800/80 mb-3 space-y-2">
-              <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-500 flex items-center justify-between">
-                <span>SECUENCIA DE ACTIVACIÓN</span>
-                <span class="text-zinc-600 font-mono text-[9px]">EN JUEGO</span>
+            <!-- Locked / Status Banner -->
+            ${isLockedCheat ? `
+              <div class="bg-amber-950/30 border border-amber-900/40 rounded-lg p-2 mb-2.5 flex items-center gap-2 text-[11px] text-amber-300">
+                <span class="text-sm">🔒</span>
+                <span>Se desbloquea a las 00:00 del <strong>19 de Noviembre de 2026</strong>.</span>
               </div>
-              <div class="flex flex-wrap items-center gap-1.5 py-0.5">
-                ${keycapsHtml || `<span class="font-mono text-xs text-neon-cyan font-bold">${escapeHtml(item.code)}</span>`}
-              </div>
-            </div>
+            ` : ''}
 
-            <!-- Lore / Context tip -->
+            <!-- Context / Description -->
             ${item.description ? `
-              <p class="text-[11px] sm:text-xs text-zinc-400 italic mb-4 leading-normal bg-zinc-900/40 p-2.5 rounded-lg border-l-2 border-neon-cyan/40">
+              <p class="text-[11px] text-zinc-400 italic mb-3 leading-normal bg-black/30 p-2 rounded-lg border-l-2 border-neon-cyan/40">
                 ${escapeHtml(item.description)}
               </p>
             ` : ''}
           </div>
 
-          <!-- Bottom Actions: Copy Code & Completed Checkbox -->
-          <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-3 mt-auto">
+          <!-- Bottom Action Bar (Compact & Mobile-First) -->
+          <div class="pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2 mt-auto">
             
-            <!-- Checkbox: Completado/Usado -->
+            <!-- Checkbox: Guardado / Visto -->
             <label class="inline-flex items-center gap-2 cursor-pointer select-none text-xs text-zinc-300 hover:text-white py-1">
               <input 
                 type="checkbox" 
                 class="completed-checkbox w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-neon-cyan focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#00f0ff]"
                 data-id="${item.id}"
                 ${isCompleted ? 'checked' : ''}
-                aria-label="Marcar como usado o completado"
+                aria-label="Guardar ficha"
               >
-              <span class="text-[11px] sm:text-xs font-medium text-zinc-400 group-hover:text-zinc-200">
-                ${isCompleted ? '<span class="text-emerald-400 font-semibold">✓ Usado</span>' : 'Completado'}
+              <span class="text-[11px] font-medium text-zinc-400 group-hover:text-zinc-200">
+                ${isCompleted ? '<span class="text-emerald-400 font-semibold">✓ Guardado</span>' : 'Guardar'}
               </span>
             </label>
 
-            <!-- Copy Code Button (Touch-Friendly Large Target) -->
+            <!-- Discreet Share Button -->
             <button 
               type="button" 
-              class="copy-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 min-h-[42px] sm:min-h-[38px] rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white text-xs font-semibold border border-zinc-700/80 hover:border-neon-cyan/60 transition-all duration-200 active:scale-95"
-              data-code="${escapeHtml(item.code)}"
+              class="share-btn inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 hover:border-zinc-700 transition-all duration-150 active:scale-95"
+              data-id="${item.id}"
               data-title="${escapeHtml(item.title)}"
-              title="Copiar secuencia al portapapeles"
+              data-summary="${escapeHtml(item.effect)}"
+              title="Compartir ficha"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neon-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-neon-pink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
-              <span class="copy-label">Copiar código</span>
+              <span>Compartir</span>
             </button>
 
           </div>
@@ -312,50 +353,52 @@
     itemsGrid.innerHTML = html;
   }
 
-  // Copy to Clipboard with Visual Feedback
-  async function copyToClipboard(text, btn) {
-    let success = false;
+  // Share functionality with Toast feedback
+  async function shareItem(title, summary, btn) {
+    const shareUrl = window.location.href.split('#')[0];
+    const textToShare = `🌴 GTA 6 Leonida Hub: ${title} — ${summary}\n🔗 ${shareUrl}`;
+
+    let copied = false;
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-        success = true;
+        await navigator.clipboard.writeText(textToShare);
+        copied = true;
       }
-    } catch (err) {
-      // Fallback if permission rejected or unfocused window
+    } catch (e) {
+      // Fallback
     }
 
-    if (!success) {
+    if (!copied) {
       try {
         const textarea = document.createElement('textarea');
-        textarea.value = text;
+        textarea.value = textToShare;
         textarea.style.position = 'fixed';
         textarea.style.left = '-9999px';
-        textarea.style.top = '0';
         document.body.appendChild(textarea);
         textarea.focus();
         textarea.select();
-        success = document.execCommand('copy');
+        copied = document.execCommand('copy');
         document.body.removeChild(textarea);
       } catch (e) {
-        console.warn('Fallback copy error:', e);
+        console.warn('Fallback share error:', e);
       }
     }
 
-    // Always give feedback to the user on mobile/desktop
+    // Button visual feedback
     const originalHTML = btn.innerHTML;
     btn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
       </svg>
-      <span class="text-emerald-400 font-bold">¡Copiado!</span>
+      <span class="text-emerald-400 font-semibold">¡Copiado!</span>
     `;
-    btn.classList.add('border-emerald-500', 'bg-emerald-950/40');
+    btn.classList.add('border-emerald-500/50', 'bg-emerald-950/30');
 
-    showToast(`¡Código copiado!: ${text}`);
+    showToast('¡Copiado para compartir!');
 
     setTimeout(() => {
       btn.innerHTML = originalHTML;
-      btn.classList.remove('border-emerald-500', 'bg-emerald-950/40');
+      btn.classList.remove('border-emerald-500/50', 'bg-emerald-950/30');
     }, 1800);
   }
 
@@ -370,9 +413,9 @@
       .replace(/'/g, '&#039;');
   }
 
-  // Setup Event Listeners
+  // Event Listeners
   function setupListeners() {
-    // Search input (instant)
+    // Search input
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
       if (searchQuery.length > 0) {
@@ -423,14 +466,14 @@
     if (resetProgressBtn) {
       resetProgressBtn.addEventListener('click', () => {
         if (completedItems.size === 0) {
-          showToast('No hay trucos marcados como usados.');
+          showToast('No hay fichas guardadas.');
           return;
         }
-        if (confirm('¿Deseas reiniciar todas las marcas de trucos completados/usados?')) {
+        if (confirm('¿Deseas reiniciar todas las marcas de guardado?')) {
           completedItems.clear();
           saveCompletedToStorage();
           renderItems();
-          showToast('Progreso reiniciado correctamente');
+          showToast('Marcas reiniciadas');
         }
       });
     }
@@ -459,19 +502,19 @@
       });
     }
 
-    // Grid delegated clicks (Copy Button & Checkbox)
+    // Grid delegated clicks (Share Button & Checkbox)
     itemsGrid.addEventListener('click', (e) => {
-      // Copy Button
-      const copyBtn = e.target.closest('.copy-btn');
-      if (copyBtn) {
-        const code = copyBtn.getAttribute('data-code');
-        const title = copyBtn.getAttribute('data-title');
-        copyToClipboard(code, copyBtn, title);
+      // Share button click
+      const shareBtn = e.target.closest('.share-btn');
+      if (shareBtn) {
+        const title = shareBtn.getAttribute('data-title');
+        const summary = shareBtn.getAttribute('data-summary');
+        shareItem(title, summary, shareBtn);
         return;
       }
     });
 
-    // Checkbox change delegated
+    // Checkbox toggle
     itemsGrid.addEventListener('change', (e) => {
       const checkbox = e.target.closest('.completed-checkbox');
       if (checkbox) {
@@ -481,7 +524,7 @@
         if (checkbox.checked) {
           completedItems.add(id);
           if (card) card.classList.add('is-completed');
-          showToast('Marcado como usado');
+          showToast('Guardado en favoritos');
         } else {
           completedItems.delete(id);
           if (card) card.classList.remove('is-completed');
@@ -489,16 +532,14 @@
 
         saveCompletedToStorage();
 
-        // If "hide completed" is active, re-render
         if (hideCompleted) {
           renderItems();
         } else {
-          // Update the label text inside the card immediately
           const labelSpan = checkbox.parentElement.querySelector('span');
           if (labelSpan) {
             labelSpan.innerHTML = checkbox.checked
-              ? '<span class="text-emerald-400 font-semibold">✓ Usado</span>'
-              : 'Completado';
+              ? '<span class="text-emerald-400 font-semibold">✓ Guardado</span>'
+              : 'Guardar';
           }
         }
       }
@@ -523,14 +564,12 @@
 
     // Keyboard Shortcuts
     document.addEventListener('keydown', (e) => {
-      // Shortcut '/' to focus search
       if (e.key === '/' && document.activeElement !== searchInput) {
         e.preventDefault();
         searchInput.focus();
         searchInput.select();
       }
 
-      // Shortcut 'Escape' to clear or close modal
       if (e.key === 'Escape') {
         if (supportModal && !supportModal.classList.contains('hidden')) {
           supportModal.classList.add('hidden');
@@ -544,14 +583,22 @@
     });
   }
 
+  // Timers setup
+  function setupTimers() {
+    updatePhoneClock();
+    updateCountdown();
+    setInterval(updatePhoneClock, 10000);
+    setInterval(updateCountdown, 1000);
+  }
+
   // Entry Point
   function init() {
     loadCompletedFromStorage();
+    setupTimers();
     setupListeners();
     loadData();
   }
 
-  // Start app
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
