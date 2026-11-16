@@ -1,0 +1,17 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node / Scratch / Logs
+*.log
+test_chrome_profile/
+__pycache__/
+
+# Keep essential web application files
+!index.html
+!styles.css
+!app.js
+!data.json
+!README.md
