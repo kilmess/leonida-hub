@@ -65,12 +65,12 @@
     <!-- === HERO BANNER === -->
      <style>
   .hero-banner::after, .hero-banner::before, .hero-bg::after { display: none !important; }
-  .hero-svg { height: 100% !important; }
+  .hero-bg, .hero-svg { height: 100% !important; max-height: none !important; }
 </style>
     <section class="hero-banner" id="hero-banner" style="background-color: #171628;">
       <div class="hero-bg" style="height: 100%; background-color: #171628;">
         <!-- Miami/Vice City SVG atmospheric background -->
-        <svg class="hero-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <svg class="hero-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 340" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%"   stop-color="#1a0533"/>
@@ -169,10 +169,10 @@
       </div>
 
       <!-- Hero content overlay -->
-      <div class="hero-content" style="display: flex; justify-content: space-between; align-items: center; height: 100%; padding-top: 48px; padding-bottom: 32px; background: transparent;">
+      <div class="hero-content" style="display: flex; justify-content: space-between; align-items: center; height: 100%; padding-top: 50px; padding-bottom: 32px; background: transparent;">
   <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 540px; background: transparent;">
     <img src="gta6-logo.png" alt="Grand Theft Auto VI" style="height: 112px; width: auto; object-fit: contain; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.65));">
-    <div style="margin-top: 38px; font-size: 1.85rem; font-weight: 800; color: #f59e9b; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+    <div style="margin-top: 40px; font-size: 1.85rem; font-weight: 800; color: #f59e9b; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
       LEONIDA <span style="font-weight: 600; margin-left: 4px;">HUB</span>
     </div>
     <p style="color: #ffffff; font-weight: 500; margin: 8px 0 0 0; font-size: 0.98rem; line-height: 1.45; text-shadow: 0 2px 8px rgba(0,0,0,0.75);">
