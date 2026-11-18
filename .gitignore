@@ -15,3 +15,6 @@ __pycache__/
 !app.js
 !data.json
 !README.md
+
+clips_listos/
+*.mp4
