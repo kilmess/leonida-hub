@@ -16,7 +16,7 @@
     'Ubicaciones':     { badgeClass: 'badge-ubicaciones', stripClass: 'strip-ubicaciones', label: 'DISTRITO' },
     'Vehículos':       { badgeClass: 'badge-vehiculos',   stripClass: 'strip-vehiculos',   label: 'VEHÍCULO' },
     'Radios & Música': { badgeClass: 'badge-musica',      stripClass: 'strip-musica',      label: 'RADIO' },
-    'Trucos (19 Nov)': { badgeClass: 'badge-trucos',      stripClass: 'strip-trucos',      label: 'TRUCOS' },
+    'Cheats':          { badgeClass: 'badge-cheats',      stripClass: 'strip-cheats',      label: 'CHEATS' },
     'Tips & FAQ':      { badgeClass: 'badge-faq',         stripClass: 'strip-faq',         label: 'FAQ' },
   };
 
@@ -177,7 +177,7 @@
   // RENDER: Normal card (clean — no italic box)
   // =====================================================
   function renderNormalCard(item) {
-    const isLocked  = item.category === 'Trucos (19 Nov)';
+    const isLocked  = item.category === ' Cheats';
     const confirmed = item.confirmed_in
       ? `<span class="item-confirmed"><span class="confirmed-dot"></span>${esc(item.confirmed_in)}</span>`
       : '';
