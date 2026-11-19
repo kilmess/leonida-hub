@@ -46,6 +46,40 @@
   const topnavTabs = document.getElementById('topnav-tabs');
 
   // =====================================================
+  // INJECT CHEAT CARD STYLES (Pink border, icon & inline summary)
+  // =====================================================
+  function injectCheatStyles() {
+    if (document.getElementById('leonida-cheat-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'leonida-cheat-styles';
+    style.textContent = `
+      .faq-card.cheat-card {
+        border: 1px solid rgba(244, 114, 182, 0.55) !important;
+        box-shadow: 0 0 0 1px rgba(244, 114, 182, 0.1);
+      }
+      .faq-card.cheat-card:hover,
+      .faq-card.cheat-card.open {
+        border-color: #f472b6 !important;
+      }
+      .faq-card.cheat-card .faq-toggle-icon {
+        color: #f472b6 !important;
+      }
+      .cheat-header-inline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .cheat-summary-inline {
+        font-size: 13px;
+        font-weight: 400;
+        color: #a1a1aa;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // =====================================================
   // TOAST
   // =====================================================
   let toastTimer = null;
@@ -92,7 +126,7 @@
     return itemsData.filter(item => {
       if (currentCat !== 'Todos' && item.category !== currentCat) return false;
       if (q) {
-        const hay = [item.title, item.effect, item.description, item.category, item.location, ...(item.tags || [])]
+        const hay = [item.title, item.code, item.effect, item.description, item.category, item.location, ...(item.tags || [])]
           .filter(Boolean).join(' ').toLowerCase();
         if (!hay.includes(q)) return false;
       }
@@ -119,7 +153,52 @@
   function formatFaqSteps(desc) {
     if (!desc) return '';
     return desc.split('\n').filter(l => l.trim())
-      .map(line => `<p>${esc(line.trim())}</p>`).join('');
+      .map(line => {
+        const escaped = esc(line.trim()).replace(
+          'la combinación de arriba.',
+          '<strong style="color:#fff;">la combinación de arriba.</strong>'
+        );
+        return `<p>${escaped}</p>`;
+      }).join('');
+  }
+
+  // Prominent arrow/button combo block for Cheat Codes
+  function renderCheatCombo(item) {
+    if (!item.code) return '';
+    const tokens = item.code.trim().split(/\s+/);
+    const pillsHtml = tokens.map(token => `
+      <span style="
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:34px;
+        height:34px;
+        padding:0 8px;
+        background:rgba(255,255,255,0.07);
+        border:1px solid rgba(255,255,255,0.18);
+        border-radius:6px;
+        font-size:20px;
+        font-weight:800;
+        color:#f5f5f7;
+        line-height:1;
+        box-shadow:0 2px 4px rgba(0,0,0,0.25);
+      ">${esc(token)}</span>
+    `).join('');
+
+    return `
+      <div style="
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+        gap:8px;
+        margin-bottom:14px;
+        padding:10px 12px;
+        background:rgba(0,0,0,0.28);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:6px;
+      ">
+        ${pillsHtml}
+      </div>`;
   }
 
   // Share button HTML
@@ -173,21 +252,34 @@
   // RENDER: Accordion card (Cheats & Guía para Principiantes)
   // =====================================================
   function renderFaqCard(item) {
-    const defaultBadge = item.category === 'Cheats' ? 'CHEAT CODE' : 'FAQ';
+    const isCheat      = item.category === 'Cheats';
+    const cardClass    = isCheat ? 'faq-card cheat-card' : 'faq-card';
+    const shareSummary = item.code ? `${item.code} — ${item.effect}` : item.effect;
+
+    const headerContent = isCheat
+      ? `<span class="faq-toggle-content">
+           <span class="cheat-header-inline">
+             <span class="faq-question">${esc(item.title)}</span>
+             ${item.effect ? `<span class="cheat-summary-inline">${esc(item.effect)}</span>` : ''}
+           </span>
+         </span>`
+      : `<span class="faq-toggle-content">
+           <span class="faq-badge">${esc(item.badge || 'FAQ')}</span>
+           <span class="faq-question">${esc(item.title)}</span>
+         </span>`;
+
     return `
-      <div class="faq-card" id="card-${item.id}" data-id="${item.id}">
+      <div class="${cardClass}" id="card-${item.id}" data-id="${item.id}">
         <button class="faq-toggle" data-faq-id="${item.id}" aria-expanded="false">
           <span class="faq-toggle-icon">+</span>
-          <span class="faq-toggle-content">
-            <span class="faq-badge">${esc(item.badge || defaultBadge)}</span>
-            <span class="faq-question">${esc(item.title)}</span>
-          </span>
+          ${headerContent}
           <span class="faq-toggle-arrow">&#9660;</span>
         </button>
         <div class="faq-answer" id="faq-answer-${item.id}">
+          ${renderCheatCombo(item)}
           <div class="faq-answer-steps">${formatFaqSteps(item.description)}</div>
           <div class="faq-answer-footer">
-            ${shareBtnHtml(item.id, item.title, item.effect)}
+            ${shareBtnHtml(item.id, item.title, shareSummary)}
           </div>
         </div>
       </div>`;
@@ -447,6 +539,7 @@
   // ENTRY POINT
   // =====================================================
   function init() {
+    injectCheatStyles();
     setupListeners();
     loadData();
   }

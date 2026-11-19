@@ -4,21 +4,10 @@
     "title": "$250,000",
     "category": "Cheats",
     "type": "faq",
-    "badge": "CHEAT CODE",
-    "effect": "Añade $250,000 dólares al instante a la cuenta del personaje activo en Modo Historia.",
-    "description": "1. Termina la historia principal primero: el menú de Trucos (en Progreso) solo aparece al completarla.\n2. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n3. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n4. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa: ↑ → ↓ ← ↑ ← ↓ →.\n5. Solo disponible en Modo Historia.",
+    "code": "↑ → ↓ ← ↑ ← ↓ →",
+    "effect": "recibes $250.000 en efectivo.",
+    "description": "1. Termina la historia principal primero: el menú de Trucos solo aparece al completarla.\n2. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n3. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n4. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa la combinación de arriba.",
     "location": null,
-    "tags": ["cheats", "trucos", "dinero", "250000", "efectivo", "ps5", "xbox", "codigos"]
-  },
-  {
-    "id": "cheat-dinero-250k",
-    "title": "$250,000 en Efectivo",
-    "category": "Cheats",
-    "type": "cheat",
-    "badge": "CHEAT CODE",
-    "effect": "Añade $250,000 dólares al instante a la cuenta del personaje activo en Modo Historia.",
-    "description": "Secuencia: Arriba, Derecha, Abajo, Izquierda, Arriba, Izquierda, Abajo, Derecha (manteniendo L1 + R1 en PS5 o LB + RB en Xbox tras abrir el teléfono con Arriba). Requisitos: haber completado la historia principal para desbloquear el menú de trucos en Progreso. Advertencia: desactiva el autoguardado y los trofeos/logros durante la sesión.",
-    "location": "Modo Historia",
     "tags": ["cheats", "trucos", "dinero", "250000", "efectivo", "ps5", "xbox", "codigos"]
   },
   {
