@@ -1,6 +1,17 @@
 [
   {
     "id": "cheat-dinero-250k",
+    "title": "$250,000",
+    "category": "Cheats",
+    "type": "faq",
+    "badge": "CHEAT CODE",
+    "effect": "Añade $250,000 dólares al instante a la cuenta del personaje activo en Modo Historia.",
+    "description": "1. Termina la historia principal primero: el menú de Trucos (en Progreso) solo aparece al completarla.\n2. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n3. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n4. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa: ↑ → ↓ ← ↑ ← ↓ →.\n5. Solo disponible en Modo Historia.",
+    "location": null,
+    "tags": ["cheats", "trucos", "dinero", "250000", "efectivo", "ps5", "xbox", "codigos"]
+  },
+  {
+    "id": "cheat-dinero-250k",
     "title": "$250,000 en Efectivo",
     "category": "Cheats",
     "type": "cheat",
