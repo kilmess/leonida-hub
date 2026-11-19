@@ -11,6 +11,50 @@
     "tags": ["cheats", "trucos", "dinero", "250000", "efectivo", "ps5", "xbox", "codigos"]
   },
   {
+    "id": "cheat-body-armor",
+    "title": "Body Armor",
+    "category": "Cheats",
+    "type": "faq",
+    "code": "↓ ↑ ← ↑ ↑ ↑ ↑ ↑ ↓ ↓",
+    "effect": "te equipa con blindaje corporal completo al instante.",
+    "description": "1. Termina la historia principal primero: el menú de Trucos solo aparece al completarla.\n2. Para desbloquear este cheat necesitas completar 100 workouts.\n3. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n4. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n5. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa la combinación de arriba.",
+    "location": null,
+    "tags": ["cheats", "trucos", "armadura", "body armor", "blindaje", "chaleco", "ps5", "xbox", "codigos"]
+  },
+  {
+    "id": "cheat-raise-heat-level",
+    "title": "Raise Heat Level",
+    "category": "Cheats",
+    "type": "faq",
+    "code": "← ↓ → ↓ ↑ ↓ ↑",
+    "effect": "aumenta el nivel de alerta en todo el mapa.",
+    "description": "1. Termina la historia principal primero: el menú de Trucos solo aparece al completarla.\n2. Para desbloquear este cheat necesitas escapar de un nivel de búsqueda de mínimo tres estrellas en 25 ocasiones. \n3. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n4. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n5. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa la combinación de arriba.",
+    "location": null,
+    "tags": ["cheats", "trucos", "heat level", "alerta", "policia", "mapa", "ps5", "xbox", "codigos"]
+  },
+  {
+    "id": "cheat-raise-wanted-level",
+    "title": "Raise Wanted Level",
+    "category": "Cheats",
+    "type": "faq",
+    "code": "← ↓ → ↓ ↑ → ↑",
+    "effect": "añade estrellas a tu nivel de búsqueda.",
+     "description": "1. Termina la historia principal primero: el menú de Trucos solo aparece al completarla.\n2. Para desbloquear este cheat necesitas escapar de un nivel de búsqueda de mínimo tres estrellas en 50 ocasiones. \n3. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n4. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n5. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa la combinación de arriba.",
+    "location": null,
+    "tags": ["cheats", "trucos", "wanted level", "estrellas", "policia", "busqueda", "ps5", "xbox", "codigos"]
+  },
+  {
+    "id": "cheat-unlimited-focus",
+    "title": "Unlimited Focus",
+    "category": "Cheats",
+    "type": "faq",
+    "code": "↓ ↑ ↑ ↓ ↑ ↓ ↑ ↓ ↑ →",
+    "effect": "tu barra de concentración nunca se agota.",
+    "description": "1. Termina la historia principal primero: el menú de Trucos solo aparece al completarla.\n2. Guarda la partida antes: activar un truco desactiva el guardado y los trofeos/logros hasta que cierres el juego.\n3. Presiona Arriba (↑) en la cruceta para sacar el teléfono.\n4. Mantén L1 (PS5) o LB (Xbox), presiona R1 o RB, e ingresa la combinación de arriba.",
+    "location": null,
+    "tags": ["cheats", "trucos", "unlimited focus", "concentracion", "habilidad", "infinita", "ps5", "xbox", "codigos"]
+  },
+  {
     "id": "loc-ocean-drive-vice-beach",
     "title": "Ocean Drive & Vice Beach",
     "category": "Ubicaciones",
