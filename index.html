@@ -3,13 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
   <title>Leonida Hub</title>
   <meta name="description" content="Wiki editorial de GTA 6: distritos de Vice City & Leonida, vehículos confirmados, radios, trucos y guía FAQ para principiantes.">
   <meta name="theme-color" content="#18151f">
   <link rel="icon" type="image/png" href="lhlogo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* === REGIONES DE LEONIDA (3x2 Showcase Grid) === */
+    .regions-section {
+      padding: 20px 24px 4px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .regions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .region-card {
+      position: relative;
+      height: 175px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #1c1a27;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .region-card:hover {
+      transform: translateY(-3px);
+      border-color: #f59e9b;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+    .region-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .region-card:hover img {
+      transform: scale(1.04);
+    }
+    .region-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(12, 11, 18, 0.92) 0%,
+        rgba(12, 11, 18, 0.45) 45%,
+        rgba(12, 11, 18, 0.05) 100%
+      );
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 14px 16px;
+    }
+    .region-title {
+      font-family: 'Poppins', 'Montserrat', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      margin: 0 0 3px 0;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+    }
+    .region-sub {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #d4d4d8;
+      line-height: 1.3;
+      margin: 0;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    }
+    @media (max-width: 960px) {
+      .regions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 580px) {
+      .regions-section {
+        padding: 16px 14px 0;
+      }
+      .regions-grid {
+        grid-template-columns: 1fr;
+      }
+      .region-card {
+        height: 155px;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -25,9 +110,9 @@
 
       <!-- Logo -->
       <a class="site-logo" href="#" id="logo-home" aria-label="Inicio – LEONIDA HUB">
-  <img src="lhlogo.png" alt="Leonida Hub" style="height: 28px; width: auto; object-fit: contain; border-radius: 4px;">
-  <div class="logo-text">LEONIDA<span>HUB</span></div>
-</a>
+        <img src="lhlogo.png" alt="Leonida Hub" style="height: 28px; width: auto; object-fit: contain; border-radius: 4px;">
+        <div class="logo-text">LEONIDA<span>HUB</span></div>
+      </a>
 
       <!-- Primary Nav Tabs -->
       <nav class="topnav-tabs" id="topnav-tabs" role="tablist" aria-label="Categorías principales">
@@ -64,14 +149,14 @@
   <div class="page-wrapper">
 
     <!-- === HERO BANNER === -->
-     <style>
-  .hero-banner, .hero-content { min-height: auto !important; }
-  .hero-content { background: transparent !important; }
-  .hero-banner::after, .hero-banner::before, .hero-bg::after, .hero-bg::before { display: none !important; content: none !important; }
-  .hero-bg { position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; height: 100% !important; max-height: none !important; background: #141526 !important; }
-  .hero-svg { width: 100% !important; height: 100% !important; max-height: none !important; display: block !important; }
-  .hero-bg svg rect:last-of-type { fill: #141526 !important; }
-</style>
+    <style>
+      .hero-banner, .hero-content { min-height: auto !important; }
+      .hero-content { background: transparent !important; }
+      .hero-banner::after, .hero-banner::before, .hero-bg::after, .hero-bg::before { display: none !important; content: none !important; }
+      .hero-bg { position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; height: 100% !important; max-height: none !important; background: #141526 !important; }
+      .hero-svg { width: 100% !important; height: 100% !important; max-height: none !important; display: block !important; }
+      .hero-bg svg rect:last-of-type { fill: #141526 !important; }
+    </style>
     <section class="hero-banner" id="hero-banner" style="background-color: #141526;">
       <div class="hero-bg" style="height: 100%; background-color: #141526;">
         <!-- Miami/Vice City SVG atmospheric background -->
@@ -175,15 +260,69 @@
 
       <!-- Hero content overlay -->
       <div class="hero-content" style="display: flex; justify-content: space-between; align-items: center; min-height: auto; padding-top: 28px; padding-bottom: 14px; background: transparent;">
-    <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 540px; background: transparent;">
-      <img src="gta6-logo.png" alt="Grand Theft Auto VI" style="height: 112px; width: auto; object-fit: contain; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.65));">
-      <div style="font-family: 'Poppins', 'Montserrat', sans-serif; margin-top: 34px; font-size: 2rem; font-weight: 800; color: #f59e9b; letter-spacing: 0.02em; text-transform: uppercase; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
-  LEONIDA <span style="margin-left: 4px;">HUB</span>
-</div>
-      <p style="color: #ffffff; font-weight: 500; margin: 8px 0 0 0; font-size: 0.98rem; line-height: 1.45; text-shadow: 0 2px 8px rgba(0,0,0,0.75);">
-  Tu guía de confianza para dominar Vice City y Leonida: cheat codes, easter eggs, guías, lore, radios, mecánicas, novedades y mucho más
-</p>
-    </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 540px; background: transparent;">
+          <img src="gta6-logo.png" alt="Grand Theft Auto VI" style="height: 112px; width: auto; object-fit: contain; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.65));">
+          <div style="font-family: 'Poppins', 'Montserrat', sans-serif; margin-top: 34px; font-size: 2rem; font-weight: 800; color: #f59e9b; letter-spacing: 0.02em; text-transform: uppercase; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+            LEONIDA <span style="margin-left: 4px;">HUB</span>
+          </div>
+          <p style="color: #ffffff; font-weight: 500; margin: 8px 0 0 0; font-size: 0.98rem; line-height: 1.45; text-shadow: 0 2px 8px rgba(0,0,0,0.75);">
+            Tu guía de confianza para dominar Vice City y Leonida: cheat codes, easter eggs, guías, lore, radios, mecánicas, novedades y mucho más
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- === REGIONES DESTACADAS DE LEONIDA (Arriba de toda la información) === -->
+    <section class="regions-section" id="regions-showcase" aria-label="Regiones principales de Leonida">
+      <div class="regions-grid">
+        <article class="region-card" data-region-query="Vice">
+          <img src="region-vice-city.jpg" alt="Vice City" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">Vice City</h3>
+            <p class="region-sub">El corazón estilo Miami del estado de Leonida.</p>
+          </div>
+        </article>
+
+        <article class="region-card" data-region-query="Keys">
+          <img src="region-leonida-keys.jpg" alt="Leonida Keys" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">Leonida Keys</h3>
+            <p class="region-sub">El archipiélago inspirado en los Cayos de Florida.</p>
+          </div>
+        </article>
+
+        <article class="region-card" data-region-query="Grassrivers">
+          <img src="region-grassrivers.jpg" alt="The Grassrivers" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">The Grassrivers</h3>
+            <p class="region-sub">Los inmensos humedales y pantanos estilo Everglades.</p>
+          </div>
+        </article>
+
+        <article class="region-card" data-region-query="Port Gellhorn">
+          <img src="region-port-gellhorn.jpg" alt="Port Gellhorn" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">Port Gellhorn</h3>
+            <p class="region-sub">Una ciudad portuaria decadente y llena de moteles.</p>
+          </div>
+        </article>
+
+        <article class="region-card" data-region-query="Ambrosia">
+          <img src="region-ambrosia.jpg" alt="Ambrosia" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">Ambrosia</h3>
+            <p class="region-sub">Ciudad industrial en el interior del estado.</p>
+          </div>
+        </article>
+
+        <article class="region-card" data-region-query="Mount Kalaga">
+          <img src="region-mount-kalaga.jpg" alt="Mount Kalaga" loading="lazy">
+          <div class="region-overlay">
+            <h3 class="region-title">Mount Kalaga</h3>
+            <p class="region-sub">El parque nacional y tierras altas del norte.</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <!-- === CONTENT AREA === -->

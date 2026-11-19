@@ -32,6 +32,7 @@
   const faqGrid            = document.getElementById('faq-grid');
   const emptyState         = document.getElementById('empty-state');
   const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
+  const regionsShowcase    = document.getElementById('regions-showcase');
   const toast              = document.getElementById('toast');
   const toastMessage       = document.getElementById('toast-message');
   const supportBtn         = document.getElementById('support-btn');
@@ -321,6 +322,12 @@
     const filtered = getFiltered();
     const isAccordionView = currentCat === 'Tips & FAQ' || currentCat === 'Cheats';
 
+    // Mostrar las 6 tarjetas de regiones solo en TODO o DISTRITOS (cuando no hay búsqueda activa)
+    if (regionsShowcase) {
+      const showRegions = (currentCat === 'Todos' || currentCat === 'Ubicaciones') && !searchQuery.trim();
+      regionsShowcase.style.display = showRegions ? 'block' : 'none';
+    }
+
     // Empty state
     if (filtered.length === 0) {
       itemsGrid.innerHTML = '';
@@ -460,6 +467,19 @@
   // EVENT LISTENERS
   // =====================================================
   function setupListeners() {
+
+    // Clic en tarjetas de regiones de Leonida
+    if (regionsShowcase) {
+      regionsShowcase.addEventListener('click', e => {
+        const card = e.target.closest('.region-card');
+        if (!card) return;
+        const query = card.getAttribute('data-region-query');
+        if (query) {
+          handleSearch(query);
+          document.querySelector('.content-area')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
 
     // Desktop search
     if (searchInputDesktop) {
