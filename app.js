@@ -1,6 +1,6 @@
 /**
  * LEONIDA VI HUB — Full-Width Layout
- * Vanilla JS — Zero emojis, single search input, FAQ 2-col grid
+ * Vanilla JS — Zero emojis, single search input, Cheats & Guides 2-col grid
  */
 
 (function () {
@@ -14,7 +14,7 @@
     'Ubicaciones':     { badgeClass: 'badge-ubicaciones', stripClass: 'strip-ubicaciones', label: 'DISTRITO' },
     'Vehículos':       { badgeClass: 'badge-vehiculos',   stripClass: 'strip-vehiculos',   label: 'VEHÍCULO' },
     'Radios & Música': { badgeClass: 'badge-musica',      stripClass: 'strip-musica',      label: 'RADIO' },
-    'Cheats':          { badgeClass: 'badge-cheats',      stripClass: 'strip-cheats',      label: 'CHEATS' },
+    'Cheats':          { badgeClass: 'badge-cheats',      stripClass: 'strip-cheats',      label: 'CHEAT CODE' },
     'Tips & FAQ':      { badgeClass: 'badge-faq',         stripClass: 'strip-faq',         label: 'FAQ' },
   };
 
@@ -28,15 +28,15 @@
   // =====================================================
   // DOM REFERENCES
   // =====================================================
-  const itemsGrid        = document.getElementById('items-grid');
-  const faqGrid          = document.getElementById('faq-grid');
-  const emptyState       = document.getElementById('empty-state');
+  const itemsGrid          = document.getElementById('items-grid');
+  const faqGrid            = document.getElementById('faq-grid');
+  const emptyState         = document.getElementById('empty-state');
   const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
-  const toast            = document.getElementById('toast');
-  const toastMessage     = document.getElementById('toast-message');
-  const supportBtn       = document.getElementById('support-btn');
-  const supportModal     = document.getElementById('support-modal');
-  const closeModalBtn    = document.getElementById('close-modal-btn');
+  const toast              = document.getElementById('toast');
+  const toastMessage       = document.getElementById('toast-message');
+  const supportBtn         = document.getElementById('support-btn');
+  const supportModal       = document.getElementById('support-modal');
+  const closeModalBtn      = document.getElementById('close-modal-btn');
 
   // Single desktop search + mobile search
   const searchInputDesktop = document.getElementById('search-input');
@@ -115,7 +115,7 @@
     return `<div class="card-cat-strip ${meta ? meta.stripClass : 'strip-default'}"></div>`;
   }
 
-  // Format multi-line FAQ steps
+  // Format multi-line FAQ / Cheat steps
   function formatFaqSteps(desc) {
     if (!desc) return '';
     return desc.split('\n').filter(l => l.trim())
@@ -139,10 +139,9 @@
   }
 
   // =====================================================
-  // RENDER: Normal card (clean — no italic box)
+  // RENDER: Normal card
   // =====================================================
   function renderNormalCard(item) {
-    const isLocked  = false
     const locationHtml = item.location ? `
       <div class="item-location">
         <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,15 +170,16 @@
   }
 
   // =====================================================
-  // RENDER: FAQ Accordion card
+  // RENDER: Accordion card (Cheats & Guía para Principiantes)
   // =====================================================
   function renderFaqCard(item) {
+    const defaultBadge = item.category === 'Cheats' ? 'CHEAT CODE' : 'FAQ';
     return `
       <div class="faq-card" id="card-${item.id}" data-id="${item.id}">
         <button class="faq-toggle" data-faq-id="${item.id}" aria-expanded="false">
           <span class="faq-toggle-icon">+</span>
           <span class="faq-toggle-content">
-            <span class="faq-badge">${esc(item.badge || 'FAQ')}</span>
+            <span class="faq-badge">${esc(item.badge || defaultBadge)}</span>
             <span class="faq-question">${esc(item.title)}</span>
           </span>
           <span class="faq-toggle-arrow">&#9660;</span>
@@ -198,8 +198,7 @@
   // =====================================================
   function renderItems() {
     const filtered = getFiltered();
-    const total    = itemsData.length;
-    const isFaqView = currentCat === 'Tips & FAQ';
+    const isAccordionView = currentCat === 'Tips & FAQ' || currentCat === 'Cheats';
 
     // Empty state
     if (filtered.length === 0) {
@@ -213,41 +212,62 @@
 
     emptyState.style.display = 'none';
 
-    if (isFaqView) {
-      // FAQ view: use faq-grid (2 col), hide items-grid
+    if (isAccordionView) {
+      // Vista dedicada de Cheats o Tips & FAQ (2 columnas)
       itemsGrid.style.display = 'none';
       itemsGrid.innerHTML = '';
       if (faqGrid) {
         faqGrid.style.display = 'grid';
+        faqGrid.style.alignItems = 'start';
         faqGrid.innerHTML = filtered.map(item =>
           item.type === 'faq' ? renderFaqCard(item) : renderNormalCard(item)
         ).join('');
       }
     } else {
-      // Normal view: use catalog-grid (3-4 col)
+      // Vista general ("Todos" o búsqueda)
       if (faqGrid) { faqGrid.style.display = 'none'; faqGrid.innerHTML = ''; }
       itemsGrid.style.display = 'grid';
 
       const regular = filtered.filter(i => i.type !== 'faq');
-      const faqs    = filtered.filter(i => i.type === 'faq');
+      const cheats  = filtered.filter(i => i.type === 'faq' && i.category === 'Cheats');
+      const guides  = filtered.filter(i => i.type === 'faq' && i.category !== 'Cheats');
 
       let html = regular.map(item => renderNormalCard(item)).join('');
 
-      // In "Todos" or search, append FAQs with separator
-      if (faqs.length > 0) {
+      // 1. Sección CHEAT CODES (arriba de Guía para Principiantes)
+      if (cheats.length > 0) {
         html += `
-          <div style="grid-column:1/-1; margin:16px 0 4px;">
+          <div style="grid-column:1/-1; margin:20px 0 4px;">
             <div style="background:var(--header-bar-bg);border-radius:var(--radius-sm);
               padding:5px 12px;display:inline-block;">
               <span style="font-family:var(--font-title);font-weight:800;font-size:12px;
                 letter-spacing:.08em;text-transform:uppercase;color:var(--header-bar-text);">
-                GUÍA PARA PRINCIPIANTES & PREGUNTAS FRECUENTES
+                CHEAT CODES
+              </span>
+            </div>
+          </div>
+          <div style="grid-column:1/-1;" id="cheats-inline-wrapper">
+            <div class="faq-grid" id="cheats-inline" style="align-items:start;">
+              ${cheats.map(item => renderFaqCard(item)).join('')}
+            </div>
+          </div>`;
+      }
+
+      // 2. Sección GUÍA PARA PRINCIPIANTES
+      if (guides.length > 0) {
+        html += `
+          <div style="grid-column:1/-1; margin:20px 0 4px;">
+            <div style="background:var(--header-bar-bg);border-radius:var(--radius-sm);
+              padding:5px 12px;display:inline-block;">
+              <span style="font-family:var(--font-title);font-weight:800;font-size:12px;
+                letter-spacing:.08em;text-transform:uppercase;color:var(--header-bar-text);">
+                GUÍA PARA PRINCIPIANTES
               </span>
             </div>
           </div>
           <div style="grid-column:1/-1;" id="faq-inline-wrapper">
-            <div class="faq-grid" id="faq-inline">
-              ${faqs.map(item => renderFaqCard(item)).join('')}
+            <div class="faq-grid" id="faq-inline" style="align-items:start;">
+              ${guides.map(item => renderFaqCard(item)).join('')}
             </div>
           </div>`;
       }
@@ -356,7 +376,7 @@
       logoHome.addEventListener('click', e => { e.preventDefault(); resetAll(); });
     }
 
-    // Grid: delegated events (save btn, share btn, faq accordion)
+    // Grid: delegated events (share btn, accordion)
     function setupGridListeners(grid) {
       if (!grid) return;
       grid.addEventListener('click', e => {
@@ -372,15 +392,13 @@
           return;
         }
 
-        // FAQ accordion toggle
+        // Accordion toggle (Cheats & Guía para Principiantes)
         const faqToggle = e.target.closest('.faq-toggle');
         if (faqToggle) {
-          const id   = faqToggle.getAttribute('data-faq-id');
-          const card = document.getElementById(`card-${id}`);
+          const card = faqToggle.closest('.faq-card');
           if (!card) return;
           const isOpen = card.classList.contains('open');
-          // Close all others in same container
-          const container = card.closest('.faq-grid, #faq-inline') || document;
+          const container = card.closest('.faq-grid') || document;
           container.querySelectorAll('.faq-card.open').forEach(c => {
             c.classList.remove('open');
             const btn = c.querySelector('.faq-toggle');
@@ -399,14 +417,6 @@
 
     setupGridListeners(itemsGrid);
     setupGridListeners(faqGrid);
-
-    // Also handle delegated events on dynamically injected inline faq
-    document.addEventListener('click', e => {
-      const inlineFaq = document.getElementById('faq-inline');
-      if (!inlineFaq) return;
-      // Events bubble up; just ensure faq-inline is handled
-      // (already handled by document-level if not caught by itemsGrid)
-    });
 
     // Support modal
     if (supportBtn && supportModal && closeModalBtn) {
