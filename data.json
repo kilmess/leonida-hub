@@ -110,28 +110,6 @@
     "tags": ["cheats", "trucos", "no reload", "sin recarga", "municion", "armas", "ps5", "xbox", "codigos"]
   },
   {
-    "id": "loc-ocean-drive-vice-beach",
-    "title": "Ocean Drive & Vice Beach",
-    "category": "Ubicaciones",
-    "type": "location",
-    "badge": "DISTRITO",
-    "effect": "Epicentro de la vida nocturna de Vice City: hoteles Art Deco iluminados, playas densas y el boulevard de las estrellas.",
-    "description": "Recreacion a escala real de South Beach (Miami Beach). Escenario emblematico del Trailer 1 con desfile de superdeportivos, patinadores en Lummus Park y clubes de playa VIP.",
-    "location": "Vice Beach, Leonida",
-    "tags": ["ocean drive", "playa", "vice beach", "turismo", "hoteles", "distrito", "ubicaciones"]
-  },
-  {
-    "id": "loc-port-gellhorn-wetlands",
-    "title": "Port Gellhorn & Kelly County",
-    "category": "Ubicaciones",
-    "type": "location",
-    "badge": "ZONA RURAL",
-    "effect": "Zona de moteles decadentes, carreras de barro y robos de gasolineras. Territorio donde empieza la historia de Jason y Lucia.",
-    "description": "Inspirado en el centro y costa oeste de Florida, con densas redes de manglares y pantanos habitados por aligátores. Base de operaciones de los primeros capítulos.",
-    "location": "Kelly County / Grassrivers",
-    "tags": ["port gellhorn", "kelly county", "pantano", "grassrivers", "everglades", "atracos", "ubicaciones"]
-  },
-  {
     "id": "veh-bravado-banshee-gts",
     "title": "Bravado Banshee GTS",
     "category": "Vehículos",
@@ -193,7 +171,7 @@
     "type": "faq",
     "badge": "DINERO RAPIDO",
     "effect": "Acumula capital inicial sin desbloquear misiones principales aprovechando los atracos y contratos del mundo libre.",
-    "description": "1. Busca furgonetas de reparto blindadas en zonas industriales del Puerto Gellhorn: llevan entre $8.000–$15.000.\n2. Acepta contratos de robo de coches de alta gama para los talleres de Venetian Islands (pagan un 20% del valor del vehiculo).\n3. Juega a los dados ilegales en callejones de Little Leonida entre las 10 PM y las 3 AM.\n4. Vende articulos robados de tiendas 24/7 en el mercado negro del muelle sur.\n5. Las apuestas del casino flotante en Biscayne Bay multiplican x3 con la habilidad Suerte al 50%.",
+    "description": "PROXIMAMENTE...",
     "location": null,
     "tags": ["dinero", "inicio", "economia", "faq", "principiantes", "tips"]
   },
@@ -204,7 +182,7 @@
     "type": "faq",
     "badge": "JASON & LUCIA",
     "effect": "El sistema de confianza bilateral determina que habilidades unicas desbloqueas, afectando misiones, coartadas y el final del juego.",
-    "description": "1. La barra de Confianza sube al completar misiones juntos, compartir botin 50/50 y no abandonar al companero herido.\n2. Alta Confianza (Lucia): desbloquea hackeo de terminales bancarios, coartada de identidad falsa y tiro de francotiradora a larga distancia.\n3. Alta Confianza (Jason): desbloquea conduccion evasiva avanzada, intimidacion de guardias sin violencia y atracos nocturnos silenciosos.\n4. Si la confianza cae al minimo, uno de los dos puede traicionar al otro en el acto III y activar un final alternativo oscuro.",
+    "description": "PROXIMAMENTE...",
     "location": null,
     "tags": ["jason", "lucia", "confianza", "habilidades", "sistema", "faq", "tips"]
   },
@@ -215,7 +193,7 @@
     "type": "faq",
     "badge": "PRINCIPIANTES",
     "effect": "Prioriza estos 5 pasos antes de la primera mision principal para entrar equipado al acto I.",
-    "description": "1. Explora el almacen abandonado al norte de Gellhorn (marcado con una senal de peligro): tiene armadura nivel 1 y una pistola SWC.\n2. Nada en el rio Grassrivers hasta el islote central: hay una mochila con $2.000 y un rifle de francotirador oxidado.\n3. Duerme 3 noches en el motel Sundown (gratis la primera semana) para subir la barra de Resistencia al 25%.\n4. Revisa los cubos de basura en el mercado de Port Gellhorn: aparecen de forma aleatoria llaves de vehiculo.\n5. Atraca la farmacia de Main Street con solo cruzarte con la empleada (sin usar arma): consigues $400 y suministros medicos basicos.",
+    "description": "PROXIMAMENTE...",
     "location": null,
     "tags": ["inicio", "equipo", "gratis", "principiantes", "primeros pasos", "faq", "tips"]
   },
@@ -226,7 +204,7 @@
     "type": "faq",
     "badge": "ARMAS & AUTOS",
     "effect": "Rutas y trucos de evasion para cortar la senal de la LCPD antes de que lleguen helicopteros militares.",
-    "description": "1. Con 4 estrellas: dirigete al tunel del Causeway Norte; los vehiculos policiales no pueden seguirte por el carril secundario sumergido.\n2. Con 5 estrellas: usa el garaje automatico de Venetian Boulevard (cuesta $500 de alquiler, baja las estrellas a 2 en 60 segundos).\n3. Siempre lleva un Interceptor Policial robado: los coches patrulla no disparan a los de su mismo modelo.\n4. Las zonas de pantano de Grassrivers desactivan la senal de GPS policial si conduces off-road mas de 400 metros.\n5. Llama a Lucia para que active un seneuelo de distraccion desde el telefono (disponible con Confianza mayor a 60%).",
+    "description": "PROXIMAMENTE...",
     "location": null,
     "tags": ["policia", "estrellas", "escape", "wanted", "evasion", "faq", "armas", "autos", "tips"]
   },
@@ -237,7 +215,7 @@
     "type": "faq",
     "badge": "NEGOCIOS",
     "effect": "El sistema de propiedades en GTA VI funciona como inversion activa: cada negocio requiere una mision de inauguracion antes de generar ingresos pasivos.",
-    "description": "1. Las primeras 4 propiedades disponibles aparecen en el mapa solo despues de completar el final del Acto I.\n2. El Almacen de Port Gellhorn ($45.000): genera $1.800/dia de base. Mejorarlo con Seguridad Privada lo sube a $3.200/dia.\n3. El Club de Playa de Vice Beach ($120.000): ingreso variable segun el numero de fiestas que organices (max. 1 cada 3 dias de juego).\n4. Los negocios ilegales (drogas, contrabando) son mas rentables pero acumulan Reputacion Criminal: a mas del 80%, el FBI puede congelar tus cuentas.\n5. Lucia puede gestionar 2 propiedades de forma autonoma si la Confianza es mayor o igual al 80%.",
+    "description": "PROXIMAMENTE...",
     "location": null,
     "tags": ["propiedades", "negocios", "dinero", "inversion", "acto", "faq", "tips"]
   }
