@@ -197,7 +197,6 @@
         <div class="card-body">
           <div class="item-title">${esc(item.title)}</div>
           <div class="item-effect">${esc(item.effect)}</div>
-          ${lockedBanner}
           ${locationHtml}
         </div>
         <div class="card-footer">
