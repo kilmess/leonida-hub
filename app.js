@@ -162,7 +162,25 @@
       }).join('');
   }
 
-  // Prominent arrow/button combo block for Cheat Codes
+  // Uniform vector SVG arrows & button pills for Cheat Codes
+  function renderCheatToken(token) {
+    const arrowPaths = {
+      '↑': 'M12 19V5M5 12l7-7 7 7',
+      '↓': 'M12 5v14M19 12l-7 7-7-7',
+      '←': 'M19 12H5M12 19l-7-7 7-7',
+      '→': 'M5 12h14M12 5l7 7-7 7'
+    };
+
+    if (arrowPaths[token]) {
+      return `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="${arrowPaths[token]}"/>
+        </svg>`;
+    }
+    return `<span style="font-size:13px;font-weight:800;letter-spacing:.03em;">${esc(token)}</span>`;
+  }
+
   function renderCheatCombo(item) {
     if (!item.code) return '';
     const tokens = item.code.trim().split(/\s+/);
@@ -171,18 +189,14 @@
         display:inline-flex;
         align-items:center;
         justify-content:center;
-        min-width:34px;
-        height:34px;
-        padding:0 8px;
+        width:36px;
+        height:36px;
         background:rgba(255,255,255,0.07);
         border:1px solid rgba(255,255,255,0.18);
         border-radius:6px;
-        font-size:20px;
-        font-weight:800;
         color:#f5f5f7;
-        line-height:1;
         box-shadow:0 2px 4px rgba(0,0,0,0.25);
-      ">${esc(token)}</span>
+      ">${renderCheatToken(token)}</span>
     `).join('');
 
     return `
