@@ -9,8 +9,6 @@
   // =====================================================
   // CONSTANTS
   // =====================================================
-  const STORAGE_KEY = 'leonida_vi_saved';
-  const LAUNCH_DATE = new Date('2026-11-19T00:00:00');
 
   const CATEGORY_META = {
     'Ubicaciones':     { badgeClass: 'badge-ubicaciones', stripClass: 'strip-ubicaciones', label: 'DISTRITO' },
@@ -26,8 +24,6 @@
   let itemsData      = [];
   let currentCat     = 'Todos';
   let searchQuery    = '';
-  let hideSaved      = false;
-  let savedItems     = new Set();
 
   // =====================================================
   // DOM REFERENCES
@@ -48,23 +44,6 @@
   const clearSearchBtn     = document.getElementById('clear-search-btn');
 
   const topnavTabs = document.getElementById('topnav-tabs');
-
-  // =====================================================
-  // LOCAL STORAGE
-  // =====================================================
-  function loadSaved() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) savedItems = new Set(parsed);
-      }
-    } catch (e) { savedItems = new Set(); }
-  }
-
-  function persistSaved() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedItems])); } catch (e) {}
-  }
 
   // =====================================================
   // TOAST
@@ -112,7 +91,6 @@
     const q = searchQuery.toLowerCase().trim();
     return itemsData.filter(item => {
       if (currentCat !== 'Todos' && item.category !== currentCat) return false;
-      if (hideSaved && savedItems.has(item.id)) return false;
       if (q) {
         const hay = [item.title, item.effect, item.description, item.category, item.location, ...(item.tags || [])]
           .filter(Boolean).join(' ').toLowerCase();
@@ -142,19 +120,6 @@
     if (!desc) return '';
     return desc.split('\n').filter(l => l.trim())
       .map(line => `<p>${esc(line.trim())}</p>`).join('');
-  }
-
-  // Save button HTML
-  function saveBtnHtml(id) {
-    const isSaved = savedItems.has(id);
-    return `
-      <button class="card-action-btn btn-save save-btn ${isSaved ? 'saved' : ''}" data-id="${id}">
-        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-        </svg>
-        <span class="save-label">${isSaved ? 'GUARDADO' : 'GUARDAR'}</span>
-      </button>`;
   }
 
   // Share button HTML
@@ -200,7 +165,6 @@
           ${locationHtml}
         </div>
         <div class="card-footer">
-          ${saveBtnHtml(item.id)}
           ${shareBtnHtml(item.id, item.title, item.effect)}
         </div>
       </div>`;
@@ -223,7 +187,6 @@
         <div class="faq-answer" id="faq-answer-${item.id}">
           <div class="faq-answer-steps">${formatFaqSteps(item.description)}</div>
           <div class="faq-answer-footer">
-            ${saveBtnHtml(item.id)}
             ${shareBtnHtml(item.id, item.title, item.effect)}
           </div>
         </div>
@@ -350,28 +313,6 @@
   function resetAll() {
     handleSearch('');
     setCategory('Todos');
-    hideSaved = false;
-  }
-
-  // =====================================================
-  // SAVE BUTTON HANDLER (button, not checkbox)
-  // =====================================================
-  function handleSaveToggle(btn) {
-    const id = btn.getAttribute('data-id');
-    if (!id) return;
-    if (savedItems.has(id)) {
-      savedItems.delete(id);
-      btn.classList.remove('saved');
-      btn.querySelector('.save-label').textContent = 'GUARDAR';
-      showToast('Eliminado de favoritos');
-    } else {
-      savedItems.add(id);
-      btn.classList.add('saved');
-      btn.querySelector('.save-label').textContent = 'GUARDADO';
-      showToast('Guardado en favoritos');
-    }
-    persistSaved();
-    if (hideSaved) renderItems();
   }
 
   // =====================================================
@@ -419,9 +360,6 @@
     function setupGridListeners(grid) {
       if (!grid) return;
       grid.addEventListener('click', e => {
-        // Save button
-        const saveBtn = e.target.closest('.save-btn');
-        if (saveBtn) { handleSaveToggle(saveBtn); return; }
 
         // Share button
         const shareBtn = e.target.closest('.share-btn');
@@ -499,7 +437,6 @@
   // ENTRY POINT
   // =====================================================
   function init() {
-    loadSaved();
     setupListeners();
     loadData();
   }
