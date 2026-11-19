@@ -62,12 +62,6 @@
 
   const topnavTabs = document.getElementById('topnav-tabs');
 
-  // Countdown
-  const cdDays  = document.getElementById('cd-days');
-  const cdHours = document.getElementById('cd-hours');
-  const cdMins  = document.getElementById('cd-mins');
-  const cdSecs  = document.getElementById('cd-secs');
-
   // =====================================================
   // LOCAL STORAGE
   // =====================================================
@@ -83,24 +77,6 @@
 
   function persistSaved() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedItems])); } catch (e) {}
-  }
-
-  // =====================================================
-  // COUNTDOWN
-  // =====================================================
-  function tickCountdown() {
-    if (!cdDays) return;
-    const diff = LAUNCH_DATE - new Date();
-    if (diff <= 0) {
-      cdDays.textContent = '000'; cdHours.textContent = '00';
-      cdMins.textContent = '00';  cdSecs.textContent  = '00';
-      return;
-    }
-    const s = Math.floor(diff / 1000);
-    cdDays.textContent  = String(Math.floor(s / 86400)).padStart(3, '0');
-    cdHours.textContent = String(Math.floor((s % 86400) / 3600)).padStart(2, '0');
-    cdMins.textContent  = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-    cdSecs.textContent  = String(s % 60).padStart(2, '0');
   }
 
   // =====================================================
