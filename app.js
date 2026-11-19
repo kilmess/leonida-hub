@@ -566,8 +566,6 @@
   function init() {
     loadSaved();
     setupListeners();
-    tickCountdown();
-    setInterval(tickCountdown, 1000);
     loadData();
   }
 
