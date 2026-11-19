@@ -1,6 +1,6 @@
 /**
  * LEONIDA VI HUB — Full-Width Layout
- * Vanilla JS — Zero emojis, single search input, Cheats & Guides 2-col grid
+ * Vanilla JS — Zero emojis, single search input, Cheats (pink) & Guides (orange) 2-col grid
  */
 
 (function () {
@@ -46,13 +46,14 @@
   const topnavTabs = document.getElementById('topnav-tabs');
 
   // =====================================================
-  // INJECT CHEAT CARD STYLES (Pink border, icon & inline summary)
+  // INJECT CHEAT (PINK) & GUIDE (ORANGE) CARD STYLES
   // =====================================================
-  function injectCheatStyles() {
+  function injectAccordionStyles() {
     if (document.getElementById('leonida-cheat-styles')) return;
     const style = document.createElement('style');
     style.id = 'leonida-cheat-styles';
     style.textContent = `
+      /* Cheats — Rosa Vice City */
       .faq-card.cheat-card {
         border: 1px solid rgba(244, 114, 182, 0.55) !important;
         box-shadow: 0 0 0 1px rgba(244, 114, 182, 0.1);
@@ -74,6 +75,20 @@
         font-size: 13px;
         font-weight: 400;
         color: #a1a1aa;
+      }
+
+      /* Guías / Tips & FAQ — Naranja Leonida */
+      .faq-card.guide-card {
+        border: 1px solid rgba(230, 157, 69, 0.55) !important;
+        box-shadow: 0 0 0 1px rgba(230, 157, 69, 0.1);
+      }
+      .faq-card.guide-card:hover,
+      .faq-card.guide-card.open {
+        border-color: #e69d45 !important;
+      }
+      .faq-card.guide-card .faq-toggle-icon,
+      .faq-card.guide-card .faq-badge {
+        color: #e69d45 !important;
       }
     `;
     document.head.appendChild(style);
@@ -267,7 +282,7 @@
   // =====================================================
   function renderFaqCard(item) {
     const isCheat      = item.category === 'Cheats';
-    const cardClass    = isCheat ? 'faq-card cheat-card' : 'faq-card';
+    const cardClass    = isCheat ? 'faq-card cheat-card' : 'faq-card guide-card';
     const shareSummary = item.code ? `${item.code} — ${item.effect}` : item.effect;
 
     const headerContent = isCheat
@@ -340,7 +355,7 @@
 
       let html = regular.map(item => renderNormalCard(item)).join('');
 
-      // 1. Sección CHEAT CODES (arriba de Guía para Principiantes)
+      // 1. Sección CHEAT CODES (bloque rosado arriba de Guía para Principiantes)
       if (cheats.length > 0) {
         html += `
           <div style="grid-column:1/-1; margin:20px 0 4px;">
@@ -359,14 +374,14 @@
           </div>`;
       }
 
-      // 2. Sección GUÍA PARA PRINCIPIANTES
+      // 2. Sección GUÍA PARA PRINCIPIANTES (bloque naranja)
       if (guides.length > 0) {
         html += `
           <div style="grid-column:1/-1; margin:20px 0 4px;">
-            <div style="background:var(--header-bar-bg);border-radius:var(--radius-sm);
+            <div style="background:#e69d45;border-radius:var(--radius-sm);
               padding:5px 12px;display:inline-block;">
               <span style="font-family:var(--font-title);font-weight:800;font-size:12px;
-                letter-spacing:.08em;text-transform:uppercase;color:var(--header-bar-text);">
+                letter-spacing:.08em;text-transform:uppercase;color:#141526;">
                 GUÍA PARA PRINCIPIANTES
               </span>
             </div>
@@ -553,7 +568,7 @@
   // ENTRY POINT
   // =====================================================
   function init() {
-    injectCheatStyles();
+    injectAccordionStyles();
     setupListeners();
     loadData();
   }
