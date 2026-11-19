@@ -20,15 +20,6 @@
     'Tips & FAQ':      { badgeClass: 'badge-faq',         stripClass: 'strip-faq',         label: 'FAQ' },
   };
 
-  const HEADER_LABELS = {
-    'Todos':           'BASE DE DATOS — TODOS LOS REGISTROS',
-    'Ubicaciones':     'DISTRITOS & ZONAS DE LEONIDA',
-    'Vehículos':       'VEHÍCULOS CONFIRMADOS EN GTA VI',
-    'Radios & Música': 'EMISORAS & BANDA SONORA OFICIAL',
-    'Trucos (19 Nov)': 'TRUCOS — SE DESBLOQUEAN EL 19 NOV 2026',
-    'Tips & FAQ':      'GUÍA PARA PRINCIPIANTES & PREGUNTAS FRECUENTES',
-  };
-
   // =====================================================
   // STATE
   // =====================================================
@@ -43,11 +34,7 @@
   // =====================================================
   const itemsGrid        = document.getElementById('items-grid');
   const faqGrid          = document.getElementById('faq-grid');
-  const resultsCount     = document.getElementById('results-count');
   const emptyState       = document.getElementById('empty-state');
-  const catalogTitle     = document.getElementById('catalog-title');
-  const hideSavedToggle  = document.getElementById('hide-saved-toggle');
-  const resetMarksBtn    = document.getElementById('reset-marks-btn');
   const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
   const toast            = document.getElementById('toast');
   const toastMessage     = document.getElementById('toast-message');
@@ -95,14 +82,12 @@
   // =====================================================
   async function loadData() {
     try {
-      resultsCount.textContent = 'Cargando...';
       const resp = await fetch('data.json');
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       itemsData = await resp.json();
       renderItems();
     } catch (err) {
       console.error('data.json error:', err);
-      resultsCount.textContent = 'Error cargando la base de datos.';
       itemsGrid.innerHTML = `
         <div style="padding:24px;text-align:center;color:#f08080;border:1px solid #5c3636;border-radius:4px;background:#2a1a1a;grid-column:1/-1;">
           <strong>No se pudo cargar data.json</strong><br>
@@ -267,22 +252,6 @@
     const total    = itemsData.length;
     const isFaqView = currentCat === 'Tips & FAQ';
 
-    // Update section header title
-    if (catalogTitle) {
-      catalogTitle.textContent = HEADER_LABELS[currentCat] || HEADER_LABELS['Todos'];
-    }
-
-    // Update results meta
-    if (resultsCount) {
-      if (searchQuery.trim()) {
-        resultsCount.textContent = `${filtered.length} de ${total} para "${searchQuery}"`;
-      } else if (currentCat !== 'Todos') {
-        resultsCount.textContent = `${filtered.length} registros`;
-      } else {
-        resultsCount.textContent = `${filtered.length} registros en la base de datos`;
-      }
-    }
-
     // Empty state
     if (filtered.length === 0) {
       itemsGrid.innerHTML = '';
@@ -395,7 +364,6 @@
   function resetAll() {
     handleSearch('');
     setCategory('Todos');
-    if (hideSavedToggle) hideSavedToggle.checked = false;
     hideSaved = false;
   }
 
@@ -447,25 +415,6 @@
         if (!tab) return;
         const cat = tab.getAttribute('data-category');
         if (cat) setCategory(cat);
-      });
-    }
-
-    // Hide saved toggle
-    if (hideSavedToggle) {
-      hideSavedToggle.addEventListener('change', e => {
-        hideSaved = e.target.checked;
-        renderItems();
-      });
-    }
-
-    // Reset marks
-    if (resetMarksBtn) {
-      resetMarksBtn.addEventListener('click', () => {
-        if (savedItems.size === 0) { showToast('No hay fichas guardadas.'); return; }
-        if (confirm('Reiniciar todas las marcas de guardado?')) {
-          savedItems.clear(); persistSaved(); renderItems();
-          showToast('Marcas eliminadas');
-        }
       });
     }
 
